@@ -3,26 +3,33 @@
 {% block content %}
 
 
-    <h2>What is campussim?</h2>
+    <h2>What is Campus Rakshak Simulator?</h2>
     <p>
-        CampusSim is an agent-based simulator that models the disease's spread via various interaction spaces on the campus. It generates an interaction graph between agents and interaction spaces. Agents are assigned different interactions spaces such as classrooms, hostels, messes, and cafeterias. CampusSim is a parsimonious model that enables a fast and concise simulation of the epidemic spread. The simulator models intervention strategies (case isolation, hostel quarantine, etc.) and users can also define their own, custom interventions to simulate. The simulator is a derivative based out of the IISc-TIFR City-Scale simulator.
+        Campus Rakshak Simulator is an agent-based simulator that models the disease's spread via various interaction spaces on the campus. It generates an interaction graph between agents and interaction spaces. Agents are assigned different interactions spaces such as classrooms, hostels, messes, and cafeterias. Campus Rakshak Simulator is a parsimonious model that enables a fast and concise simulation of the epidemic spread. The simulator models intervention strategies (case isolation, hostel quarantine, etc.) and users can also define their own, custom interventions to simulate. The simulator is a derivative based out of the IISc-TIFR City-Scale simulator.
     </p>
 
     <a href="{% url 'login' %}" role="button" class="btn btn-default btn-lg">Sign-in</a>
     <a href="{% url 'register' %}" role="button" class="btn btn-success btn-lg">Sign-up for Campussim</a>
-
+    <br>
+    <br>
+    <hr>
     <p>
         This project was done under the Campus Rakshak initiative supported by the Department of Science and Technology, Government of India and Centre for Networked Intelligence at the Indian Institute of Science, Bangalore
     </p>
     <div class="row p-4">
         <div class="col-1 col-md">
+            <a href="https://cni.iisc.ac.in" target="_blank" class="link-secondary">
+                <img class="img-responsive logo" alt="CNI-IISc, Bangalore" src="{% static 'images/logos/cni.jpg' %}">
+            </a>
+        </div>
+        <div class="col-1 col-md">
             <a href="https://iisc.ac.in" target="_blank" class="link-secondary">
                 <img class="img-responsive logo" alt="IISc, Bangalore" src="{% static 'images/logos/iisc.jpg' %}">
             </a>
         </div>
-        <div class="col-1 col-md">
+        <div class="col-4 col-md">
                 <a href="https://dst.gov.in/" target="_blank" class="link-secondary">
-                <img class="img-responsive logo" alt="DST, Gov. of India" src="{% static 'images/logos/dst.jpeg' %}">
+                <img class="img-responsive logo-stretch" alt="DST, Gov. of India" src="{% static 'images/logos/dst.png' %}">
                 </a>
         </div>
     </div>

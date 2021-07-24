@@ -102,7 +102,7 @@ class testingParams(models.Model):
 
 ## definition for storing the campus data files locations
 def set_upload_path(instance, filename):
-    return '/'.join(['campusData', f"{ datetime.datetime.today().strftime('%Y%m%d') }", instance.campus_name, filename])
+    return '/'.join(['campusData', f"{ datetime.datetime.today().strftime('%Y%m%d') }", instance.campus_name.replace(' ', '_'), filename])
 
 class campusData(models.Model):
     students_csv = models.FileField(upload_to=set_upload_path, null=True)
@@ -136,9 +136,9 @@ class campusData(models.Model):
 ## definition for storing the instantiation campus's file paths
 def set_instantiation_filePath(instance, filename):
     if filename != '':
-        return '/'.join(['instantiation', f"{ datetime.datetime.today().strftime('%Y%m%d') }", instance.inst_name.campus_name, filename])
+        return '/'.join(['instantiation', f"{ datetime.datetime.today().strftime('%Y%m%d') }", instance.inst_name.campus_name.replace(' ', '_'), filename])
     else:
-        return '/'.join(['instantiation', f"{ datetime.datetime.today().strftime('%Y%m%d') }", instance.inst_name.campus_name])
+        return '/'.join(['instantiation', f"{ datetime.datetime.today().strftime('%Y%m%d') }", instance.inst_name.campus_name.replace(' ', '_')])
 
 class campusInstantiation(models.Model):
     STATUS_CHOICE = (

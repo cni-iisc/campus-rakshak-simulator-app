@@ -31,6 +31,7 @@
 					<th>Name</th>
 					<th>Type</th>
 					<th>Date Created</th>
+					<th>Status</th>
 					<th>View</th>
 					<th>Action</th>
 					<th>Remove</th>
@@ -38,8 +39,9 @@
                 {% for job in campuses %}
 				<tr>
 					<td>{{job}}</td>
-					<td>Campus Data</td>
+					<td>Instantiated Campus</td>
 					<td>{{job.created_on}}</td>
+					<td>{{job.status}}</td>
 					<td></td>
 					<td></td>
 					<td><a class="btn btn-sm btn-danger" href="{% url 'delCampusData' job.pk %}">Remove</a></td>
@@ -50,6 +52,7 @@
 					<td>{{job}}</td>
 					<td>Simulations</td>
 					<td>{{job.created_on}}</td>
+					<td>{{job.status}}</td>
 					<td><a href="{% url 'viewSimulation' job.pk %}">View Parameters</a>
 
 					{% if job.status == 'Complete' %}
@@ -60,21 +63,12 @@
 					<td><a class="btn btn-sm btn-danger" href="{% url 'deleteSimulation' job.pk %}">Remove</a></td>
 				</tr>
                 {% endfor %}
-                {% for job in instantiations %}
-				<tr>
-					<td>{{job}}</td>
-					<td>Campus instantiation</td>
-					<td>{{job.created_on}}</td>
-					<td></td>
-					<td></td>
-					<td><a class="btn btn-sm btn-danger" href="{% url 'deleteCampus' job.pk %}">Remove</a></td>
-				</tr>
-                {% endfor %}
                 {% for job in interventions %}
 				<tr>
 					<td>{{job}}</td>
 					<td>Custom Intervention</td>
 					<td>{{job.created_on}}</td>
+					<td></td>
 					<td></td>
 					<td><a class="btn btn-sm btn-warning" href="{% url 'updateIntervention' job.pk %}" disabled>Update</a></td>
 					<td><a class="btn btn-sm btn-danger" href="{% url 'deleteIntervention' job.pk %}">Remove</a></td>

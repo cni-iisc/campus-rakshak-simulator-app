@@ -6,7 +6,7 @@ body {
        padding-left: 240px;
      }
    }
-   
+
    /* Sidebar */
    .sidebar {
      position: fixed;
@@ -18,7 +18,7 @@ body {
      width: 240px;
      z-index: 600;
    }
-   
+
    @media (max-width: 991.98px) {
      .sidebar {
        width: 100%;
@@ -28,7 +28,7 @@ body {
      border-radius: 5px;
      box-shadow: 0 2px 5px 0 rgb(0 0 0 / 16%), 0 2px 10px 0 rgb(0 0 0 / 12%);
    }
-   
+
    .sidebar-sticky {
      position: relative;
      top: 0;
@@ -37,12 +37,12 @@ body {
      overflow-x: hidden;
      overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
    }
-  
+
   .foobottom {
     position: fixed;
     bottom: 0px;
     text-align: left;
-    padding-top: 30px; 
+    padding-top: 30px;
 
   }
   /* .bottom {
@@ -52,12 +52,18 @@ body {
     height: 12.5%;
     bottom: 0px;
     text-align: center;
-    padding-top: 30px; 
+    padding-top: 30px;
 } */
 .logo{
   /* float:right; */
   width: 100px;
   height: 100px;
+}
+
+.logo-stretch{
+  /* float:right; */
+  width: 250px;
+  height: 50px;
 }
 
 .table-responsive {
