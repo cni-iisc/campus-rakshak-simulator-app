@@ -1,0 +1,48 @@
+{% extends 'interface/base.html' %}
+{% load static %}
+{% block content %}
+
+  <!-- Grid container -->
+  <div class="container p-4">
+    <!--Grid row-->
+    <div class="row">
+      <h2>What is Campus Rakshak Simulator?</h2>
+      <p>
+        Campus Rakshak Simulator is an agent-based simulator that models the disease's spread via various interaction spaces on the campus. It generates an interaction graph between agents and interaction spaces. Agents are assigned different interactions spaces such as classrooms, hostels, messes, and cafeterias. Campus Rakshak Simulator is a parsimonious model that enables a fast and concise simulation of the epidemic spread. The simulator models intervention strategies (case isolation, hostel quarantine, etc.) and users can also define their own, custom interventions to simulate. The simulator is a derivative based out of the IISc-TIFR City-Scale simulator.
+      </p>
+      <h2>How Campus Rakshak Simulator works?</h2>
+      <p>
+          This is work in progress
+      </p>
+
+      <!--Grid column-->
+      <h2>Support and Sponsors</h2>
+      <div class="col-lg-8 col-md-12 mb-4 mb-md-0">
+        <p>
+          This project was done under the Campus Rakshak initiative supported by the Department of Science and Technology, Government of India and Centre for Networked Intelligence at the Indian Institute of Science, Bangalore
+
+      </div>
+      <!--Grid column-->
+
+      <!--Grid column-->
+      <div class="col-2 col-md">
+        <a href="https://iisc.ac.in"  target="_blank" class="link-secondary">
+          <img class="img-responsive logo" alt="IISc, Bangalore" src="{% static 'images/logos/iisc.jpg' %}">
+        </a>
+        </div>
+        <div class="col-2 col-md">
+          <a href="https://dst.gov.in/" target="_blank" class="link-secondary">
+          <img class="img-responsive logo" alt="DST, Gov. of India" src="{% static 'images/logos/dst.jpeg' %}">
+          </a>
+        </div>
+
+      <!--Grid column-->
+
+    </div>
+    <!--Grid row-->
+  </div>
+  <!-- Grid container -->
+
+
+
+{% endblock %}

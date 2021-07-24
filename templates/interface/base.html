@@ -1,0 +1,96 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Campus Rakshak Simulator from CNI, IISc</title>
+    <meta name="description" content="Campus Rakshak Simulator, is a complimenting web-application for the campus-scale agent-based simulation framework developed at the Centre for Networked Intelligence at IISc">
+    <link rel="icon" type="image/png" sizes="96x96" href="https://iisc.ac.in/wp-content/themes/iisc/images/favicon/favicon-96x96.png">
+
+    <meta property="og:title" content="Campus Rakshak Simulator from CNI, IISc"/>
+    <meta property="og:site_name" content="Campus Rakshak Simulator"/>
+    <meta property="og:description" content="Campus Rakshak Simulator, is a complimenting web-application for the campus-scale agent-based simulation framework developed at the Centre for Networked Intelligence at IISc"/>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.3.0/mdb.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/selectize@0.12.2/dist/css/selectize.min.css" rel="stylesheet" type="text/css" />
+
+    <link href="{% static 'css/website.css' %}" rel="stylesheet">
+  </head>
+
+  <body>
+      <!-- Navbar -->
+      <!-- Sidebar -->
+      {%if request.user.is_authenticated %}
+        {% include 'interface/nav.html' %}
+      {% endif %}
+      <!-- /Sidebar -->
+      <nav id="main-navbar" class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
+        <!-- Container wrapper -->
+        <div class="container-fluid">
+          <!-- Toggle button -->
+          <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#sidebarMenu"
+            aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="fas fa-bars"></i>
+          </button>
+
+          <!-- Brand -->
+          {%if request.user.is_authenticated %}
+          <a class="navbar-brand" href="{% url 'profile' %}"> Campus Rakshak Simulator from IISc</a>
+          {% else %}
+          <a class="navbar-brand" href="{% url 'index' %}"> Campus Rakshak Simulator from IISc</a>
+          {% endif%}
+          <!-- Right links -->
+          <ul class="navbar-nav ms-auto d-flex flex-row">
+
+            <!-- Icon -->
+            <li class="nav-item me-3 me-lg-0">
+              <a class="nav-link" href="https://github.com/cni-iisc/campus-rakshak-simulator">
+                <i class="fab fa-github"></i>
+              </a>
+            </li>
+            {%if request.user.is_authenticated %}
+            <!-- Avatar -->
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle hidden-arrow d-flex align-items-center" href="#"
+                id="navbarDropdownMenuLink" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
+                {{ request.user }}  &nbsp; <i class="fas fa-angle-down"></i>
+
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+                <li><a class="dropdown-item" href="{% url 'profile'  %}">My profile</a></li>
+                <li><a class="dropdown-item" href="{% url 'userActivity'  %}">Activity Log</a></li>
+                <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+              </ul>
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+        <!-- Container wrapper -->
+      </nav>
+      <!-- /Navbar -->
+      <main style="margin-top: 58px">
+        <div class="container pt-4 overflow-auto">
+          {% include 'interface/partial/messages.html' %}
+          {% block content%}
+
+          {% endblock %}
+        </div>
+      </main>
+  </body>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    // // Hides the notification message after 3 seconds
+    //   setTimeout(function(){
+    //       $(".alert").hide();
+    // }, 3000);
+
+  </script>
+  <!-- MDB -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.3.0/mdb.min.js" ></script>
+  <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+</html>

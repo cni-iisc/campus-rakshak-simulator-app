@@ -1,0 +1,71 @@
+{% extends 'interface/base.html' %}
+{% load static %}
+{% block content %}
+
+<br>
+<div class="row">
+	<div class="col-md">
+		<div class="card card-body">
+			<h5>User Info</h5>
+			<hr>
+			<p>Name: {{user.first_name}} {{user.last_name}}</p>
+			<p>Organization: {{user.works_at}} </p>
+            <a class="btn btn-outline-dark  btn-sm btn-block" href="{% url 'userActivity' %}">Your activity summary</a>
+		</div>
+	</div>
+
+	<div class="col-md">
+		<div class="card card-body">
+			<h5>Stats for you</h5>
+			<hr>
+            <p>Interventions created: {{totIntv}}</p>
+            <p>Campuses instantiations: {{totCampus}}</p>
+			<p></p>
+		</div>
+	</div>
+
+	<div class="col-md">
+		<div class="card card-body">
+			<h5>Simulation summary</h5>
+			<hr>
+            <p>Total Jobs submitted: {{totJobs}}</p>
+            <p>Total Jobs completed: {{complete}}</p>
+            <p>Total Jobs running: {{running}}</p>
+		</div>
+	</div>
+</div>
+
+<br>
+<div class="row">
+	<div class="col-md-12">
+		<h5>Recent Simulation Jobs</h5>
+		<hr>
+		<div class="card card-body table-responsive">
+			<table class="table table-sm">
+				<tr>
+					<th>Name</th>
+					<th>Date Created</th>
+					<th>Status</th>
+					<th>Visualize</th>
+					<th>Remove</th>
+				</tr>
+                {% for job in simulations %}
+				<tr>
+					<td>{{job}}</td>
+					<td>{{job.created_on}}</td>
+					<td>{{job.status}}</td>
+					{% if job.status == 'Complete' %}
+						<td><a class="btn btn-sm btn-success" href="{% url 'visualizeSimulation' job.pk %}">Visualize</a></td>
+					{% else %}
+						<td></td>
+					{% endif %}
+					<td><a class="btn btn-sm btn-danger" href="{% url 'deleteSimulation' job.id  %}">Remove</a></td>
+				</tr>
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+
+</div>
+
+{% endblock %}

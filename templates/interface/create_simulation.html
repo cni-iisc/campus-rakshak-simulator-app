@@ -1,0 +1,97 @@
+{% extends 'interface/base.html' %}
+{% load static %}
+{% block content %}
+<br>
+
+<h3>Create a new Simulation</h3>
+<div class="container">
+    <form id="customForm" action=""  class="needs-validation" novalidate  enctype="multipart/form-data" method="POST">
+        {%csrf_token %}
+        <div id="formContainer">
+            {% for field in form %}
+            <div class="form-row">
+              <label class="col-sm-8 form-label" for="id_{{ field.name }}">
+                  {{field.label}}
+              </label>
+              {{ field }}
+              {% if field.help_text %}
+                <a href="#"   data-mdb-html="true" data-mdb-toggle="tooltip"   data-mdb-placement="right" title="{{ field.help_text|safe }}"> <i class="fa fa-info-circle"></i></a>
+              {% endif %}
+
+            </div>
+            {% endfor %}
+            </div>
+
+        <a class="btn btn-md btn-warning" href="{% url 'profile' %}"><i class="fa fa-angle-left"> </i> Go Back to User Home</a>
+        <input type="submit" value="Submit" class="btn btn-success btn-md" id="submitBtn">
+
+    </form>
+  </div>
+  <!-- Loader css -->
+  <div id="loading" style="display:none;">
+      <div class="spinner-grow text-muted"></div>
+      <div class="spinner-grow text-muted"></div>
+      <div class="spinner-grow text-success"></div>
+      <div class="spinner-grow text-muted"></div>
+      <div class="spinner-grow text-success"></div>
+      <div class="spinner-grow text-muted"></div>
+      <div class="spinner-grow text-success"></div>
+      <div class="spinner-grow text-muted"></div>
+      <div class="spinner-grow text-muted"></div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <script>
+   $("#customForm").submit(function(){
+       $('#loading').show();
+
+
+   });
+
+
+    $("#id_instantiatedCampus").on('rightnow change',function(){
+        $("input[name*='beta_']").each(function(){
+                $("#"+this.id).prev("label").remove(); //remove the  label tag for the input tag id
+                $("#"+this.id).remove(); //remove the input tag
+            });
+
+        campusName = $(this).val();
+
+        console.log(campusName);
+        if(campusName != ''){
+            $.get("/api/campus/"+ campusName +"/", function( data ) {
+                console.log(data)
+                transCoeffFile = JSON.parse(data['trans_coeff_file']);
+
+            for(var i=0; i<transCoeffFile.length; i++){
+                var element = transCoeffFile[i];
+                if(element['name'] != 'Day Scholar'){
+                    var formDiv = $('<div>')
+                    formDiv.attr({
+                        class: 'form-row'
+                    })
+
+                    $('<label>').attr({
+                        class:"col-8 form-label",
+                        for:"id_"+ element['type']
+                    }).append("Transmission Coefficients for " + element['name'] + " interaction space").appendTo(formDiv)
+
+                    var input = $('<input>').attr({
+                        type: 'text',
+                        required: true,
+                        id: 'id_'+element['type'],
+                        name: 'beta_'+element['type'],
+                        value: element['beta']
+                    }).appendTo(formDiv);
+
+                    formDiv.appendTo('#formContainer');
+                }
+            }
+
+            });
+        }
+
+    }).trigger('rightnow');
+</script>
+
+{% endblock %}

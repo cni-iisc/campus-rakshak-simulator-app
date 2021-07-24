@@ -1,0 +1,36 @@
+{% extends "interface/base.html" %}
+
+{% block content %}
+<div class="container login-container">
+    <div class="card card-container">
+        {% if error %}
+            <div class="bg-warning error">{{error}}</div>
+        {% endif %}
+        <form action="" method="POST" >
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-row">
+                <label class="col-sm-8 form-label" for="id_{{ field.name }}">
+                    {{field.label}}
+                    {% if field.help_text %}
+                        <a href="#"   data-mdb-html="true" data-mdb-toggle="tooltip"   data-mdb-placement="right" title="{{ field.help_text|safe }}"> <i class="fa fa-info-circle"></i></a>
+                    {% endif %}
+                </label>
+                {{ field }}
+            </div>
+            {% endfor %}
+            <input type="hidden" name="next" value="{{ next }}"/>
+
+            <a href="{% url 'register' %}">
+                New User? Click here to register.
+            </a>
+            <button type="submit" class="btn btn-success btn-login">Submit</button>
+            <br>
+            <a href="{% url 'forgotPassword' %}" >
+                Forgot Password?
+            </a>
+        </form>
+    </div><!-- /card-container -->
+</div>
+
+{% endblock %}

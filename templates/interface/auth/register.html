@@ -1,0 +1,35 @@
+{% extends "interface/base.html" %}
+
+{% block content %}
+<div class="container login-container">
+    <div class="card card-container">
+        {% if error %}
+            <div class="bg-warning error">{{error}}</div>
+        {% endif %}
+
+        <form action="" method="POST">
+            {% csrf_token %}
+
+            {% for field in form %}
+            <div class="form-row">
+                <label class="col-sm-8 form-label" for="id_{{ field.name }}">
+                    {{field.label}}
+                    {% if field.help_text %}
+                    <p class="text-primary">
+                        <i class="fa fa-info-circle"></i>{{ field.help_text|safe }}
+                    </p>
+                    {% endif %}
+                </label>
+                {{ field }}
+            </div>
+            {% endfor %}
+
+            <a href="{% url 'login' %}">
+                Existing User? Click here to login.
+            </a>
+            <button type="submit" class="btn btn-success btn-login">Submit</button>
+        </form>
+    </div><!-- /card-container -->
+</div>
+
+{% endblock %}

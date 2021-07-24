@@ -1,0 +1,47 @@
+{% extends 'interface/base.html' %}
+{% load static %}
+
+{% block content %}
+<br>
+<h3>{{title}}</h3>
+<p>{{instruction}}</p>
+<div class="container">
+    <div class="row">
+        <form action="" class="needs-validation" novalidate  enctype="multipart/form-data" method="POST" >
+            {% csrf_token %}
+
+            {% for field in form %}
+            <div class="form-row">
+                <label class="col-sm-8 form-label" for="id_{{ field.name }}">
+                    {{field.label}}
+                    {% if field.help_text %}
+                        <a href="#"   data-mdb-html="true" data-mdb-toggle="tooltip"   data-mdb-placement="right" title="{{ field.help_text|safe }}"> <i class="fa fa-info-circle"></i></a>
+                    {% endif %}
+                </label>
+                {{ field }}
+
+                <!-- <div class="valid-feedback">
+                    Looks good!
+                </div> -->
+            </div>
+            {% endfor %}
+            <a class="btn btn-md btn-warning" href="{% url 'profile' %}"><i class="fa fa-angle-left"> </i> Go Back to User Home</a> 
+            <input type="submit" value="Submit" class="btn btn-success btn-md" onclick="$('#loading').show()">
+
+        </form>
+    
+	<!-- Loader css -->
+    	<div id="loading" style="display:none;">
+    	    <div class="spinner-grow text-muted"></div>
+    	    <div class="spinner-grow text-muted"></div>
+    	    <div class="spinner-grow text-success"></div>
+    	    <div class="spinner-grow text-muted"></div>
+    	    <div class="spinner-grow text-success"></div>
+    	    <div class="spinner-grow text-muted"></div>
+    	    <div class="spinner-grow text-success"></div>
+    	    <div class="spinner-grow text-muted"></div>
+    	    <div class="spinner-grow text-muted"></div>
+    	</div>
+    </div>
+</div>
+{% endblock %}

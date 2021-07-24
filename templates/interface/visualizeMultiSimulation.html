@@ -1,0 +1,80 @@
+{% extends 'interface/base.html' %}
+{% load static %}
+{% block content %}
+<br>
+<h3>Visualization </h3>
+
+<div class="row">
+  <div class="col-sm-2">
+    <select multiple="multiple" size="10" name="simulation" id="simulation">
+    {% for w in results %}
+    <option value="{{ w.id }}">{{ w.name }} {{ w.campus }} {{ w.intv }}</option>
+    {% endfor %}
+    </select>
+    <br>
+    <input type="checkbox" name="plot" id="checkbox-1" value="cases" class="custom" />
+    <label for="checkbox-1">Cases</label><br>
+    <input type="checkbox" name="plot" id="checkbox-2" value="affected" class="custom" />
+    <label for="checkbox-2">Affected</label><br>
+    <input type="checkbox" name="plot" id="checkbox-3" value="recovered" class="custom" />
+    <label for="checkbox-3">Recovered</label><br>
+    <input type="checkbox" name="plot" id="checkbox-4" value="cumulative_positive_cases" class="custom" />
+    <label for="checkbox-4">Cum. Positive Cases</label><br>
+    <input type="checkbox" name="plot" id="checkbox-5" value="people_tested" class="custom" />
+    <label for="checkbox-5">People Tested</label><br>
+    <br>
+    <input type="submit" value="Submit" class="btn btn-success btn-md" id="submitBtn">
+    <a class="btn btn-md btn-warning" href="{% url 'profile' %}"><i class="fa fa-angle-left"> </i> Go Back to User Home</a>
+
+  </div>
+  <div class="col" id="target"></div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static 'js/makePlots.js' %}"></script>
+<script>
+ var x_data = {{ results|safe }};
+  $("#submitBtn").click(function () {
+      $("#target").empty();
+      var simulation = $("#simulation").val();
+
+      var options = [];
+      $.each($("input[name='plot']:checked"), function () {
+        options.push($(this).val());
+      });
+
+      for (let i = 0; i < parseInt(options.length); i++) {
+        var traceList = []
+
+        for(var j=0; j<simulation.length; j++){
+          var data = $.ajax({type: "GET", url: "/api/sim/"+ simulation[j] +"/", async: false}).responseJSON;
+          var mean_plus_std = data['agg_results'][options[i]].mean.map(function (num, idx) {
+                      return num + data['agg_results'][options[i]].std[idx];
+                    });
+
+          var mean_minus_std = data['agg_results'][options[i]].mean.map(function (num, idx) {
+              return num - data['agg_results'][options[i]].std[idx];
+            });
+          traceList.push(makeTraceTriplets(data['agg_results'].time, data['agg_results'][options[i]].mean, mean_plus_std, mean_minus_std, options[i], intervention=x_data['intervention']))
+          }
+
+          var title = ""
+          if (options[i] == 'cases'){
+            title  = "Daily new positive " + options[i] + " ";}
+          else{
+            title = "Cumulative num. " + options[i] + "";
+          }
+          console.log(traceList.length)
+          console.log(traceList)
+
+          traceList = [].concat.apply([], traceList);
+          // console.log(traceList.length)
+          // console.log(traceList)
+          plotDiv = makePlot(traceList, title, options[i], i)
+
+          document.getElementById("target").appendChild(makePlot(traceList, title, options[i], i))
+        }
+});
+</script>
+
+{% endblock %}

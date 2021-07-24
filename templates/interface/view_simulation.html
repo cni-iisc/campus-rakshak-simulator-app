@@ -1,0 +1,116 @@
+{% extends 'interface/base.html' %}
+{% load static %}
+{% block content %}
+
+
+<div class="row">
+	<div class="col-md">
+		<div class="card card-body">
+               <div class="row">
+                    <div class="col6">
+                         <h5>Simulation Name:  {{ object.simulation_name }}</h5>
+                    </div>
+                    <div class="col4"></div>
+                    <div class="col">
+                         <a class="btn btn-sm btn-warning" href="{% url 'userActivity' %}"><i class="fa fa-angle-left"> </i> Go Back to Activity Page</a>
+                    </div>
+               </div>
+
+			<table class="table table-sm">
+				<tr>
+                         <th>Simulation id</th>
+                         <td>{{ object.id }}</td>
+				</tr>
+                    <tr>
+                         <th>number of days</th>
+                         <td>{{ object.days_to_simulate }}</td>
+				</tr>
+                    <tr>
+                         <th>number of iterations</th>
+                         <td>{{ object.simulation_iterations  }}</td>
+				</tr>
+                    <tr>
+                         <th>status</th>
+                         {% if object.status == 'Complete' %}
+                         <td class="text-success">{{ object.status }}</td>
+                         {% elif object.status == 'Created' %}
+                         <td class="text-default">{{ object.status }}</td>
+                         {% elif object.status == 'Running' or   object.status == 'Queued' %}
+                         <td class="text-info">{{ object.status }}</td>
+                         {% elif object.status == 'Error' %}
+                         <td class="text-danger">{{ object.status }}</td>
+                         {% endif %}
+				</tr>
+                    <tr>
+                         <th>number of infected agents initially seeded</th>
+                         <td>{{ object.init_infected_seed  }}</td>
+				</tr>
+                    <tr>
+                         <th>instantiated campus's name</th>
+                         <td>{{ object.campus_instantiation.inst_name }}</td>
+				</tr>
+                    <tr>
+                         <th>intervention's name</th>
+                         <td>{{ object.intervention.intv_name }}</td>
+				</tr>
+				<tr>
+					 <th colspan="2">Configuration Paramters</th>
+				</tr>
+				<tr>
+					<th>Enable testing in the simulation?</th>
+					<td>{{ object.enable_testing }}</td>
+				</tr>
+				<tr>
+					<th>Number of tests that can be done per day by the campus</th>
+					<td>{{ object.testing_capacity }}</td>
+				</tr>
+				<tr>
+					<th>Periodicity of schedule</th>
+					<td>{{ object.periodicity }}</td>
+				</tr>
+				<tr>
+					<th>Scaling factor for the transmission coefficients at all smaller interaction spaces</th>
+					<td>{{ object.betaScale }}</td>
+				</tr>
+				<tr>
+					<th>Minimum number of people that a student is expected to interact with at their hostel</th>
+					<td>{{ object.min_grp_size }}</td>
+				</tr>
+				<tr>
+					<th>Maximum number of people that a student is expected to interact with at their hostel</th>
+					<td>{{ object.max_grp_size }}</td>
+				</tr>
+				<tr>
+					<th>Average number of people that a student is expected to interact with at their hostel</th>
+					<td>{{ object.avg_associations }}</td>
+				</tr>
+				<tr>
+					<th>Minimum amount of time a student could spend in the hostel</th>
+					<td>{{ object.minimum_hostel_time }}</td>
+				</tr>
+				<tr>
+					<th>Simulation created on</th>
+					<td>{{ object.created_on }}</td>
+				</tr>
+				<tr>
+					<th>Simulation created by</th>
+					<td>{{ object.created_by.email }}</td>
+				</tr>
+
+                    <tr>
+                         <th colspan="2">Transmission Coefficient Paramters Paramters (use the REST API)</th>
+                    </tr>
+                    {% for elem in betas %}
+                         <tr>
+                              <th>{{ elem.name }}</th>
+                              <td>{{ elem.beta }}</td>
+
+                         </tr>
+                    {% endfor %}
+
+			</table>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

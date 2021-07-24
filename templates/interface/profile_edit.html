@@ -1,0 +1,25 @@
+{%  extends 'interface/base.html' %}
+{% load static %}
+{% block content %}
+
+<br>
+<div class="row">
+	<div class="card card-body">
+		<h3>Account Settings</h3>
+
+		<form method="POST" action="" enctype="multipart/form-data">
+			<img class="profile-pic" src="{{request.user.usermodel.profile_pic.url}}" >
+			{% csrf_token %}
+			{{form.as_p}}
+	
+			<a class="btn btn-warning" href="{% url 'profile' %}"> &#8592; Back to Profile</a>
+			<input class="btn btn-primary" type="submit" value="Update Information" name="Update Information" >
+
+		</form>
+
+	</div>
+</div>
+
+
+
+{% endblock %}

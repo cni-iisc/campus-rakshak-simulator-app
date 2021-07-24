@@ -1,0 +1,5 @@
+type,number,average_time_spent,starting_id,active_duration
+Cafeteria,4,0.5,95,12
+Library,2,2.5,99,16
+Sports_facility,5,2,101,15
+Recreational_facility,4,2,106,16

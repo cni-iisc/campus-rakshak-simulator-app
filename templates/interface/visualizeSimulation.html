@@ -1,0 +1,68 @@
+{% extends 'interface/base.html' %}
+{% load static %}
+{% block content %}
+<br>
+<h3>Visualization </h3>
+<script src="{% static 'js/makePlots.js' %}"></script>
+
+<div class="row">
+  <div class="col-sm-2">
+    <input type="checkbox" name="plot" id="option1" value="cases" class="custom" />
+    <label for="option1">Cases</label><br>
+    <input type="checkbox" name="plot" id="option2" value="affected" class="custom" />
+    <label for="option2">Affected</label><br>
+    <input type="checkbox" name="plot" id="option3" value="recovered" class="custom" />
+    <label for="option3">Recovered</label><br>
+    <input type="checkbox" name="plot" id="checkbox-4" value="cumulative_positive_cases" class="custom" />
+    <label for="checkbox-4">Cum. Positive Cases</label><br>
+    <input type="checkbox" name="plot" id="checkbox-5" value="people_tested" class="custom" />
+    <label for="checkbox-5">People Tested</label><br>
+    <br>
+    <input type="submit" value="Submit" class="btn btn-success btn-md" id="submitBtn"><br>
+    <a class="btn btn-md btn-warning" href="{% url 'profile' %}"><i class="fa fa-angle-left"> </i> Go Back to User Home</a>
+
+  </div>
+  <div class="col" id="target"></div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  var x_data = {{ results|safe }};
+  $("#submitBtn").click(function () {
+
+    $("#target").empty()
+    var options = [];
+
+    // Jquery for checkbox input
+    $.each($("input[name='plot']:checked"), function () {
+      options.push($(this).val());
+    });
+
+
+    for (let i = 0; i < parseInt(options.length); i++) {
+      var mean_plus_std = x_data[options[i]].mean.map(function (num, idx) {
+          return num + x_data[options[i]].std[idx];
+        });
+
+      var mean_minus_std = x_data[options[i]].mean.map(function (num, idx) {
+          return num - x_data[options[i]].std[idx];
+        });
+
+      var title = ""
+
+      if (options[i] == 'cases'){
+        title  = "Daily new positive " + options[i] + " ";}
+      else{
+        title = "Cumulative num. " + options[i] + "";
+      }
+      var plotData = makeTraceTriplets(x_data.time, x_data[options[i]].mean, mean_plus_std, mean_minus_std, options[i],intervention=x_data['intervention'])
+      var plotDiv = makePlot(plotData, title, options[i], i)
+      document.getElementById("target").appendChild(plotDiv)
+    }
+  });
+</script>
+
+
+
+
+
+{% endblock %}

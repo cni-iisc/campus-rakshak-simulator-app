@@ -1,0 +1,9 @@
+pandas
+django
+celery
+python-decouple
+django-anymail
+djangorestframework
+django-cors-headers
+django-celery-results
+whitenoise

@@ -1,0 +1,133 @@
+[{
+  "num_days": 1,
+  "prob_test_index_symptomatic" : 1,
+  "prob_test_index_hospitalised" : 1,
+
+  "prob_test_positive_symptomatic" : {
+    "outside_campus" : 0,
+    "class" : 0.8,
+    "hostel" : 0.8,
+    "mess" : 0.8,
+    "cafeteria" : 0.8,
+    "library" : 0.8,
+    "sports_facility" : 0.8,
+    "recreational_facility" : 0.8,
+    "smaller_networks" : 0.8,
+    "residence_block" : 0.8,
+    "house" : 0.8
+  },
+
+    "prob_test_hospitalised_symptomatic" : {
+      "outside_campus" : 0,
+      "class" : 0.8,
+      "hostel" : 0.8,
+      "mess" : 0.8,
+      "cafeteria" : 0.8,
+      "library" : 0.8,
+      "sports_facility" : 0.8,
+      "recreational_facility" : 0.8,
+      "smaller_networks" : 0.8,
+      "residence_block" : 0.8,
+      "house" : 0.8
+  },
+
+    "prob_test_symptomatic_symptomatic" : {
+      "outside_campus" : 0,
+      "class" : 0.8,
+      "hostel" : 0.8,
+      "mess" : 0.8,
+      "cafeteria" : 0.8,
+      "library" : 0.8,
+      "sports_facility" : 0.8,
+      "recreational_facility" : 0.8,
+      "smaller_networks" : 0.8,
+      "residence_block" : 0.8,
+      "house" : 0.8
+  },
+
+    "prob_test_positive_asymptomatic" : {
+      "outside_campus" : 0,
+      "class" : 0.8,
+      "hostel" : 0.8,
+      "mess" : 0.8,
+      "cafeteria" : 0.8,
+      "library" : 0.8,
+      "sports_facility" : 0.8,
+      "recreational_facility" : 0.8,
+      "smaller_networks" : 0.8,
+      "residence_block" : 0.8,
+      "house" : 0.8
+  },
+
+    "prob_test_hospitalised_asymptomatic" : {
+      "outside_campus" : 0,
+      "class" : 0.8,
+      "hostel" : 0.8,
+      "mess" : 0.8,
+      "cafeteria" : 0.8,
+      "library" : 0.8,
+      "sports_facility" : 0.8,
+      "recreational_facility" : 0.8,
+      "smaller_networks" : 0.8,
+      "residence_block" : 0.8,
+      "house" : 0.8
+  },
+
+    "prob_test_symptomatic_asymptomatic" : {
+      "outside_campus" : 0,
+      "class" : 0.8,
+      "hostel" : 0.8,
+      "mess" : 0.8,
+      "cafeteria" : 0.8,
+      "library" : 0.8,
+      "sports_facility" : 0.8,
+      "recreational_facility" : 0.8,
+      "smaller_networks" : 0.8,
+      "residence_block" : 0.8,
+      "house" : 0.8
+  },
+ 
+  "prob_retest_recovered" : 0.2,
+
+  "prob_contact_trace_symptomatic" : {
+    "outside_campus" : 0,
+    "class" : 0.8,
+    "hostel" : 0.8,
+    "mess" : 0.8,
+    "cafeteria" : 0.8,
+    "library" : 0.8,
+    "sports_facility" : 0.8,
+    "recreational_facility" : 0.8,
+    "smaller_networks" : 0.8,
+    "residence_block" : 0.8,
+    "house" : 0.8
+  },
+
+  "prob_contact_trace_hospitalised" : {
+    "outside_campus" : 0,
+    "class" : 0.8,
+    "hostel" : 0.8,
+    "mess" : 0.8,
+    "cafeteria" : 0.8,
+    "library" : 0.8,
+    "sports_facility" : 0.8,
+    "recreational_facility" : 0.8,
+    "smaller_networks" : 0.8,
+    "residence_block" : 0.8,
+    "house" : 0.8
+  },
+
+  "prob_contact_trace_positive" : {
+    "outside_campus" : 0,
+    "class" : 0.8,
+    "hostel" : 0.8,
+    "mess" : 0.8,
+    "cafeteria" : 0.8,
+    "library" : 0.8,
+    "sports_facility" : 0.8,
+    "recreational_facility" : 0.8,
+    "smaller_networks" : 0.8,
+    "residence_block" : 0.8,
+    "house" : 0.8
+  }
+}]

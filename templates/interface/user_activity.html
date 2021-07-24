@@ -1,0 +1,92 @@
+{% extends 'interface/base.html' %}
+{% load static %}
+{% block content %}
+
+<br>
+<div class="row">
+	<div class="col-md">
+		<div class="card card-body">
+			<h5>Your Activity Log</h5>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col">
+		<div class="card card-body">
+			<div class="input-group mb-3">
+				<span class="input-group-text" id="basic-addon1">
+					<i class="fa fa-search" aria-hidden="true"></i>
+				</span>
+				<input type="text" class="form-control" aria-label="Default" aria-describedby="basic-addon1"  name="search" id="search" placeholder="Type to search activity table">
+			</div>
+		</div>
+	</div>
+</div>
+<br>
+
+<div class="row">
+		<div class="table-responsive">
+			<table class="table table-sm">
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Date Created</th>
+					<th>View</th>
+					<th>Action</th>
+					<th>Remove</th>
+				</tr>
+                {% for job in campuses %}
+				<tr>
+					<td>{{job}}</td>
+					<td>Campus Data</td>
+					<td>{{job.created_on}}</td>
+					<td></td>
+					<td></td>
+					<td><a class="btn btn-sm btn-danger" href="{% url 'delCampusData' job.pk %}">Remove</a></td>
+				</tr>
+				{% endfor %}
+                {% for job in simulations %}
+				<tr>
+					<td>{{job}}</td>
+					<td>Simulations</td>
+					<td>{{job.created_on}}</td>
+					<td><a href="{% url 'viewSimulation' job.pk %}">View Parameters</a>
+
+					{% if job.status == 'Complete' %}
+						<td><a class="btn btn-sm btn-success" href="{% url 'visualizeSimulation' job.pk %}">Visualize</a></td>
+					{% else %}
+						<td></td>
+					{% endif %}
+					<td><a class="btn btn-sm btn-danger" href="{% url 'deleteSimulation' job.pk %}">Remove</a></td>
+				</tr>
+                {% endfor %}
+                {% for job in instantiations %}
+				<tr>
+					<td>{{job}}</td>
+					<td>Campus instantiation</td>
+					<td>{{job.created_on}}</td>
+					<td></td>
+					<td></td>
+					<td><a class="btn btn-sm btn-danger" href="{% url 'deleteCampus' job.pk %}">Remove</a></td>
+				</tr>
+                {% endfor %}
+                {% for job in interventions %}
+				<tr>
+					<td>{{job}}</td>
+					<td>Custom Intervention</td>
+					<td>{{job.created_on}}</td>
+					<td></td>
+					<td><a class="btn btn-sm btn-warning" href="{% url 'updateIntervention' job.pk %}" disabled>Update</a></td>
+					<td><a class="btn btn-sm btn-danger" href="{% url 'deleteIntervention' job.pk %}">Remove</a></td>
+				</tr>
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+	<a class="btn btn-md btn-warning" href="{% url 'profile' %}"><i class="fa fa-angle-left"> </i> Go Back to User Home</a>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static 'js/search.js' %}"></script>
+
+
+{% endblock %}

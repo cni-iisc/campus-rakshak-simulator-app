@@ -1,0 +1,44 @@
+        /*close button to delete intervention*/
+        .li-close {
+          padding-left: 2%;
+          height: 5%;
+      }
+
+      .btn-link{
+        text-transform: unset !important;
+        }
+
+      /*Collapsible instruction toggle fontawesome*/
+      [data-mdb-toggle="collapse"] .fa:before {  
+        content: "\f139";
+      }
+      
+      [data-mdb-toggle="collapse"].collapsed .fa:before {
+        content: "\f13a";
+      }
+      
+
+      /*list item of each custom intervention*/
+      .interv-li {
+          list-style-type: none;
+      }
+
+      /*drop-down list for intervention*/
+      .li-interv-select {
+          width: 300px;
+          height: 110px;
+          padding-right: 2%;
+      }
+
+
+      /*time text box*/
+      .li-interv-time {
+          width: 130px;
+          height: 34px;
+      }
+
+      .checkboxes {
+        columns: 4 8em;
+        list-style-type:none;
+    }
+    
