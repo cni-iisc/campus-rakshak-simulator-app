@@ -11,8 +11,16 @@
         Campus Rakshak Simulator is an agent-based simulator that models the disease's spread via various interaction spaces on the campus. It generates an interaction graph between agents and interaction spaces. Agents are assigned different interactions spaces such as classrooms, hostels, messes, and cafeterias. Campus Rakshak Simulator is a parsimonious model that enables a fast and concise simulation of the epidemic spread. The simulator models intervention strategies (case isolation, hostel quarantine, etc.) and users can also define their own, custom interventions to simulate. The simulator is a derivative based out of the IISc-TIFR City-Scale simulator.
       </p>
       <h2>How Campus Rakshak Simulator works?</h2>
+      <center>
+          <img class="img-responsive" alt="about" src="{% static 'images/about.png' %}">
+      </center>
       <p>
-          This is work in progress
+          There are three steps to the interface: <br>
+          <ol>
+              <li><strong>Instantiate</strong>: create a synthetic campus based on on-ground demographics and interaction spaces on campus. </li>
+              <li><strong>Simulate</strong>: run simulations based on a set of disease parameters, for a custom intervention policy on an instantiated campus. </li>
+              <li><strong>Visualize</strong>: make visualizations for different statistics and compare the effectiveness of different interventions.</li>
+          </ol>
       </p>
 
       <!--Grid column-->
