@@ -54,6 +54,42 @@ def convert(o):
     if isinstance(o, np.generic): return o.item()
     raise TypeError
 
+## Function to validate inputs to create simulation
+def validateFormResponse(formData):
+    for key in formData.keys():
+        ## Transmission coefficients should always be between 0 -- 1
+        if 'beta_' in key and key != 'beta_scale':
+            if not((float(formData[key][0]) >= 0) or (float(formData[key][0]) <=1)):
+                return False
+
+    ## Simulation name should be atleast 2 characters long
+    if len(formData['simulation_name'][0]) < 2:
+        return False
+
+    ## Num-days to be atleast 1
+    if int(formData['num_days'][0]) < 1:
+        return False
+
+    min_grp_size = int(formData['min_grp_size'][0])
+    max_grp_size = int(formData['max_grp_size'][0])
+    avg_associations =int(formData['avg_associations'][0])
+
+    if (min_grp_size <= 0) or (min_grp_size >= max_grp_size):
+        return False
+    if (max_grp_size <= 0) or (min_grp_size >= max_grp_size):
+        return False
+    # ## Average number of associates should be atleast 1 and less than 20
+    if (avg_associations <= 0) or (avg_associations >= 20):
+        return False
+    if not((avg_associations > min_grp_size) or (avg_associations < max_grp_size)):
+        return False
+
+    ## periodicity == 7
+    if int(formData['periodicity'][0]) != 7:
+        return False
+    return True
+
+
 ### Function to aggregate resutls from specified number of simulatoin iterations and serialize
 def run_aggregate_sims(simPK):
     num_iterations = simulationParams.objects.get(id=simPK).simulation_iterations
@@ -76,6 +112,12 @@ def run_aggregate_sims(simPK):
     #remove simulation result
     os.system(f"rm -rf { dirName }*")
 
+    fatalities["cumulative_fatalities"] = fatalities["num_fatalities"].cumsum()
+    recovered["cumulative_recovered"] = recovered["num_recovered"].cumsum()
+    disease_label_stats['cumulative_tests'] = disease_label_stats['requested_tests'].cumsum()
+    disease_label_stats['daily_positive_cases'] = disease_label_stats['cumulative_positive_cases'].diff()
+
+
     #aggregate the data
     affected = affected.groupby(by=['Time']).agg(['std', 'mean']).reset_index()
     affected.columns = ['_'.join(filter(None, col)).strip() for col in affected.columns.values]
@@ -92,29 +134,50 @@ def run_aggregate_sims(simPK):
     data = {
         "intervention": simulationParams.objects.get(id=simPK).intervention.intv_name,
         "time": affected['Time'].values.tolist(),
-        "affected":{
-            "mean":affected['num_affected_mean'].values.tolist(),
-            "std":affected['num_affected_std'].values.tolist()
+        "daily": {
+                "infected":{
+                    "mean":affected['num_affected_mean'].values.tolist(),
+                    "std":affected['num_affected_std'].values.tolist()
+                },
+                "recovered":{
+                    "mean": recovered['num_recovered_mean'].values.tolist(),
+                    "std": recovered['num_recovered_std'].values.tolist()
+                },
+                "fatalities":{
+                    "mean": fatalities['num_fatalities_mean'].values.tolist(),
+                    "std": fatalities['num_fatalities_std'].values.tolist()
+                },
+                "positive_cases":{
+                    "mean": disease_label_stats['daily_positive_cases_mean'].values.tolist(),
+                    "std": disease_label_stats['daily_positive_cases_std'].values.tolist()
+                },
+                "people_tested":{
+                    "mean": disease_label_stats['requested_tests_mean'].values.tolist(),
+                    "std": disease_label_stats['requested_tests_std'].values.tolist()
+                },
         },
-        "cases":{
-            "mean": cases['num_cases_mean'].values.tolist(),
-            "std": cases['num_cases_std'].values.tolist()
-        },
-        "recovered":{
-            "mean": recovered['num_recovered_mean'].values.tolist(),
-            "std": recovered['num_recovered_std'].values.tolist()
-        },
-        "fatalities":{
-            "mean": fatalities['num_fatalities_mean'].values.tolist(),
-            "std": fatalities['num_fatalities_std'].values.tolist()
-        },
-        "cumulative_positive_cases":{
-            "mean": disease_label_stats['cumulative_positive_cases_mean'].values.tolist(),
-            "std": disease_label_stats['cumulative_positive_cases_std'].values.tolist()
-        },
-        "people_tested":{
-            "mean": disease_label_stats['people_tested_mean'].values.tolist(),
-            "std": disease_label_stats['people_tested_std'].values.tolist()
+        "cumulative": {
+
+                    "infected":{
+                        "mean": cases['num_cases_mean'].values.tolist(),
+                        "std": cases['num_cases_std'].values.tolist()
+                    },
+                    "recovered":{
+                        "mean": recovered['cumulative_recovered_mean'].values.tolist(),
+                        "std": recovered['cumulative_recovered_std'].values.tolist()
+                    },
+                    "fatalities":{
+                        "mean": fatalities['cumulative_fatalities_mean'].values.tolist(),
+                        "std": fatalities['cumulative_fatalities_std'].values.tolist()
+                    },
+                    "positive_cases":{
+                        "mean": disease_label_stats['cumulative_positive_cases_mean'].values.tolist(),
+                        "std": disease_label_stats['cumulative_positive_cases_std'].values.tolist()
+                    },
+                    "people_tested":{
+                        "mean": disease_label_stats['cumulative_tests_mean'].values.tolist(),
+                        "std": disease_label_stats['cumulative_tests_std'].values.tolist()
+                    },
         },
     }
 

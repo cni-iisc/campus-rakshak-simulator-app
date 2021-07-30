@@ -25,7 +25,7 @@ log.info("starting the campussim interface")
 
 # custom imports
 from .forms import *
-from .helper import get_or_none, validate_password
+from .helper import get_or_none, validate_password, validateFormResponse
 from .mixins import *
 from .models import *
 from .serializers import *
@@ -339,7 +339,7 @@ class createIntervention(LoginRequiredMixin, AddUserToContext, TemplateView):
             created_on = timezone.now()
         )
         q.save()
-        log.info(f"Intervention { received_json['intvName'] } added to the database on { datetime.dateime.now() }")
+        log.info(f"Intervention { received_json['intvName'] } added to the database")
         return render(request, self.template_name, self.get_context_data())
 
 
@@ -365,92 +365,87 @@ class updateIntervention(LoginRequiredMixin, AddUserToContext, TemplateView):
             created_by = self.request.user,
             updated_at = timezone.now()
         )
-        log.info(f"Intervention id { pk } was updated to { received_json['intvName'] } at  { datetime.datetime.now() }")
+        log.info(f"Intervention id { pk } was updated to { received_json['intvName'] }")
         return render(request, self.template_name, self.get_context_data())
 
 
 class createSimulationView(LoginRequiredMixin, AddUserToContext, TemplateView):
     template_name = 'interface/create_simulation.html'
     simName = ''
-    def render(self, request):
-        context = {
-            'form': self.form,
-            'instance': self.request.user
-        }
-        return render(request, self.template_name, context)
 
     def get_form_kwargs(self):
         kwargs = super(createSimulationView, self).get_form_kwargs()
         kwargs['instance'] = self.request.user
         return kwargs
 
-    def get(self, request):
-        self.form = createSimulationForm(instance=self.request.user)
-        return self.render(request)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        campus_queryset = campusInstantiation.objects.filter(created_by=self.request.user, status='Complete')
+        intv_queryset = interventions.objects.filter(created_by=self.request.user)
+        context['form'] = createSimulationForm(campus_queryset, intv_queryset)
         return context
 
     def post(self, request):
         if request.method == 'POST':
             formData = dict(request.POST)
+            print(validateFormResponse(formData))
+            if validateFormResponse(formData):
+                BETA = []
+                for key in formData.keys():
+                    if 'beta_' in key and key != 'beta_scale':
+                        _, betaType = key.split('_')
+                        BETA.append({
+                                'type': int(betaType),
+                                'beta': float(formData[key][0]),
+                                'alpha': 1 #TODO: get it from the ajax form
+                            })
 
-            BETA = []
-            for key in formData.keys():
-                if 'beta_' in key and key != 'beta_scale':
-                    _, betaType = key.split('_')
-                    BETA.append({
-                            'type': int(betaType),
-                            'beta': float(formData[key][0]),
-                            'alpha': 1 #TODO: get it from the ajax form
-                        })
+                testing = False
+                if formData['enable_testing'][0] == 'on':
+                    testing = True
 
-            testing = False
-            if formData['enable_testing'][0] == 'on':
-                testing = True
+                self.simName = formData['simulation_name'][0]
 
-            self.simName = formData['simulation_name'][0]
+                try:
+                    obj = testingParams.objects.get(testing_protocol_name='default')
+                except testingParams.DoesNotExist:
+                    obj = testingParams(
+                        testing_protocol_name='default',
+                        testing_protocol_file=json.load(open('./media/testing_protocol_001.json', 'r')),
+                        created_on=timezone.now()
+                    )
+                    obj.save()
 
-            try:
-                obj = testingParams.objects.get(testing_protocol_name='default')
-            except testingParams.DoesNotExist:
-                obj = testingParams(
-                    testing_protocol_name='default',
-                    testing_protocol_file=json.load(open('./media/testing_protocol_001.json', 'r')),
-                    created_on=timezone.now()
+                q = simulationParams(
+                    simulation_name=self.simName,
+                    days_to_simulate=int(formData['num_days'][0]),
+                    init_infected_seed=int(formData['num_init_infected'][0]),
+                    simulation_iterations=int(formData['num_iterations'][0]),
+                    campus_instantiation=campusInstantiation.objects.get(id=int(formData['instantiatedCampus'][0])),
+                    intervention=interventions.objects.get(id=int(formData['intvName'][0])),
+                    enable_testing=testing, #eval ensures the form data is a boolean and not a string
+                    testing_capacity=int(formData['testing_capacity'][0]),
+                    testing_protocol=testingParams.objects.get(testing_protocol_name='default'), #By default: the default testing protocol will be aded.
+                    periodicity=int(formData['periodicity'][0]),
+                    betaScale=int(formData['betaScale'][0]),
+                    min_grp_size=int(formData['min_grp_size'][0]),
+                    max_grp_size=int(formData['max_grp_size'][0]),
+                    avg_associations=int(formData['avg_associations'][0]),
+                    minimum_hostel_time=float(formData['minimum_hostel_time'][0]),
+                    created_by=self.request.user,
+                    created_on=timezone.now(),
+                    status='Created'
                 )
-                obj.save()
+                q.save()
+                launchSimulationTask(self.request, int(formData['instantiatedCampus'][0]), BETA)
+                messages.info(request, f'Simulation: { self.simName } is created. Please wait while we run the simulation on our servers, typical campus instantiations upto 10,000 agents takes about 2 minutes/ iteration.')
+                log.info(f'Simulation: { self.simName } is created')
+                return redirect('profile')
 
-            q = simulationParams(
-                simulation_name=self.simName,
-                days_to_simulate=int(formData['num_days'][0]),
-                init_infected_seed=int(formData['num_init_infected'][0]),
-                simulation_iterations=int(formData['num_iterations'][0]),
-                campus_instantiation=campusInstantiation.objects.get(id=int(formData['instantiatedCampus'][0])),
-                intervention=interventions.objects.get(id=int(formData['intvName'][0])),
-                enable_testing=testing, #eval ensures the form data is a boolean and not a string
-                testing_capacity=int(formData['testing_capacity'][0]),
-                testing_protocol=testingParams.objects.get(testing_protocol_name='default'), #By default: the default testing protocol will be aded.
-                periodicity=int(formData['periodicity'][0]),
-                betaScale=int(formData['betaScale'][0]),
-                min_grp_size=int(formData['min_grp_size'][0]),
-                max_grp_size=int(formData['max_grp_size'][0]),
-                avg_associations=int(formData['avg_associations'][0]),
-                minimum_hostel_time=float(formData['minimum_hostel_time'][0]),
-                created_by=self.request.user,
-                created_on=timezone.now(),
-                status='Created'
-            )
-            q.save()
-            launchSimulationTask(self.request, int(formData['instantiatedCampus'][0]), BETA)
-            messages.info(request, f'Simulation: { self.simName } is created. Please wait while we run the simulation on our servers, typical campus instantiations upto 10,000 agents takes about 2 minutes/ iteration.')
-            log.info(f'Simulation: { self.simName } is created')
-            return redirect('profile')
         else:
-            messages.error(request, f'Errors were encountered while creating simulation { self.simName } job. Please check the inputs and try again')
-            log.error(f'Errors were encountered while creating simulation { self.simName } job.')
-        return render(request, self.template_name, self.get_context_data())
+            messages.error(request, f'One or more fields in the create simulation for simulation name: { self.simName } was incorrect. We have reset the form to default values, please try again')
+            log.error(f'One or more fields in the create simulation for simulation name:{ self.simName } was incorrect.')
+            return render(request, self.template_name, self.get_context_data())
 
 class viewSimulationView(LoginRequiredMixin, AddUserToContext, DetailView):
     template_name = "interface/view_simulation.html"

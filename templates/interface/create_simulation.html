@@ -24,7 +24,7 @@
             </div>
 
         <a class="btn btn-md btn-warning" href="{% url 'profile' %}"><i class="fa fa-angle-left"> </i> Go Back to User Home</a>
-        <input type="submit" value="Submit" class="btn btn-success btn-md" id="submitBtn">
+        <input type="submit" value="Submit" class="btn btn-success btn-md" id="submitBtn" onclick="$('#loading').show()">
 
     </form>
   </div>
@@ -43,13 +43,6 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
   <script>
-   $("#customForm").submit(function(){
-       $('#loading').show();
-
-
-   });
-
-
     $("#id_instantiatedCampus").on('rightnow change',function(){
         $("input[name*='beta_']").each(function(){
                 $("#"+this.id).prev("label").remove(); //remove the  label tag for the input tag id

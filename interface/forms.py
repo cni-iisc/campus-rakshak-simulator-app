@@ -53,7 +53,7 @@ class RegisterForm(forms.Form):
 class LoginForm(forms.Form):
     email = forms.EmailField(
         label="Email",
-        widget=forms.EmailInput(attrs={'placeholder': 'Email', 'autofocus': ''}))
+        widget=forms.EmailInput(attrs={'placeholder': '', 'autofocus': ''}))
     password = forms.CharField(
         widget=forms.PasswordInput()
         )
@@ -75,7 +75,7 @@ class addCampusDataForm(forms.ModelForm):
         model = campusData
         fields = ('campus_name', 'classes_csv', 'common_areas_csv', 'mess_csv', 'staff_csv', 'students_csv', 'timetable_csv')
         labels = {
-            "campus_name": mark_safe("This will be the unique name for each campus<br>"),
+            "campus_name": mark_safe("Name for the instatiation"),
             "classes_csv": mark_safe("This contains Class index, Class Strength, Duration, Faculty, Type of class, days.<br> <small>View Sample <a target='_blank' href='/static/sampleData/classes.csv'>Class Detail file</a></small><br>"),
             "common_areas_csv": mark_safe("This contains common areas.<br> <small>View Sample <a target='_blank' href='/static/sampleData/common_areas.csv'>Common Areas details file</a></small><br>"),
             "mess_csv": mark_safe("This contains Mess index,active duration of the mess, and the average time spent in the mess.<br> <small>View Sample <a target='_blank' href='/static/sampleData/mess.csv'>Mess details file</a></small><br>"),
@@ -83,25 +83,41 @@ class addCampusDataForm(forms.ModelForm):
             "students_csv": mark_safe("This contains Student index, Hostel index, Mess index, Department index.<br> <small>View Sample <a target='_blank' href='/static/sampleData/student.csv'>Student Detail file</a></small><br>"),
             "timetable_csv": mark_safe("This contains Student index, and the subsequent columns will have the list of classes they take.<br> <small>View Sample <a target='_blank' href='/static/sampleData/timetable.csv'>Timetable detail file</a></small><br>")
         }
-    ##TODO [SS]: Review
+
     def clean(self):
         cleaned_data = super(addCampusDataForm, self).clean()
+        ## TODO: Validate the Timtetable.csv with proper validation rules
+        if self.cleaned_data.get('campus_name') is None:
+            raise ValidationError({"campus_name": "The name of the instantiation should not be empty"})
+
+        try:
+            classes_csv = pd.read_csv(self.cleaned_data.get('classes_csv'))
+            common_areas_csv = pd.read_csv(self.cleaned_data.get('common_areas_csv'))
+            mess_csv = pd.read_csv(self.cleaned_data.get('mess_csv'))
+            staff_csv = pd.read_csv(self.cleaned_data.get('staff_csv'))
+            students_csv = pd.read_csv(self.cleaned_data.get('students_csv'))
+
+            expected_classes_cols = ['class_id', 'dept', 'faculty_id', 'active_duration', 'days']
+            expected_common_areas_cols = ['type', 'number', 'average_time_spent', 'starting_id','active_duration']
+            expected_mess_cols = ['mess_id', 'active_duration', 'average_time_spent']
+            expected_staff_cols = ['staff_id', 'dept_associated', 'interaction_space', 'residence_block', 'adult_family_members', 'num_children']
+            expected_students_cols = ['id', 'age', 'hostel', 'mess', 'dept_id']
+
+
+            if not set(expected_classes_cols).issubset(classes_csv.columns.tolist()):
+                raise ValidationError({"classes.csv": "One or more required columns names are missing in classes.csv. Please refer the sample file and re-upload"})
+            if not set(expected_common_areas_cols).issubset(common_areas_csv.columns.tolist()):
+                raise ValidationError({"common_areas_csv": "One or more required columns names are missing in common_areas.csv. Please refer the sample file and re-upload"})
+            if not set(expected_mess_cols).issubset(mess_csv.columns.tolist()):
+                raise ValidationError({"mess_csv": "One or more required columns names are missing in mess.csv. Please refer the sample file and re-upload"})
+            if not set(expected_staff_cols).issubset(staff_csv.columns.tolist()):
+                raise ValidationError({"staff_csv": "One or more required columns names are missing in staff.csv. Please refer the sample file and re-upload"})
+            if not set(expected_students_cols).issubset(students_csv.columns.tolist()):
+                raise ValidationError({"students_csv": "One or more required columns names are missing in students.csv. Please refer the sample file and re-upload"})
+        except:
+            raise ValidationError(_("Ensure files uploaded are only in .csv format"))
         return cleaned_data
 
-#         cleaned_data = super(addCampusDataForm, self).clean()
-#         classesData=pd.read_csv(self.cleaned_data.get('classes_csv'))
-#         # commonAreasData=pd.read_csv(self.cleaned_data.get('common_areas_csv'))
-#         colNames=list(classesData.dtypes.to_dict())
-#         dataTypes=list(classesData.dtypes.to_dict().items())
-#         # print(dataTypes[0][1])
-#         for i in range(4):
-#             my_type = 'int64'
-#             if(dataTypes[i][1] != my_type):
-#                 self._errors['classes_csv']=self.error_class(['Data type Error'])
-#         if(dataTypes[4][1] != 'obj'):
-#             self._errors['classes_csv']=self.error_class(['Data type Error'])
-#
-#         return cleaned_data
 
 ## Form to specify the parameters for launching a simulation
 class createSimulationForm(forms.Form):
@@ -156,7 +172,7 @@ class createSimulationForm(forms.Form):
     )
     avg_associations = forms.FloatField(
         label="Average number of people that a student is expected to interact with at their hostel",
-        initial="5",
+        initial="12",
         required=True,
     )
     minimum_hostel_time = forms.FloatField(
@@ -166,19 +182,10 @@ class createSimulationForm(forms.Form):
     )
 
 
-    def __init__(self, *args, **kwargs):
-        user = kwargs.pop('instance', None)
+    def __init__(self, campus_queryset, intv_queryset, *args, **kwargs):
         super(createSimulationForm, self).__init__(*args, **kwargs)
-        campus_queryset = campusInstantiation.objects.filter(created_by=user, status='Complete')
-        intv_queryset = interventions.objects.filter(created_by=user)
-
-        campusChoices = []
-        for campus in campus_queryset:
-            campusChoices.append((campus.id, campus.inst_name))
-
-        interventionChoices = []
-        for intv in intv_queryset:
-            interventionChoices.append( (intv.id, intv.intv_name) )
+        campusChoices = [(campus.id, campus.inst_name) for campus in campus_queryset]
+        interventionChoices = [(intv.id, intv.intv_name) for intv in intv_queryset]
 
         self.fields['instantiatedCampus'] = forms.ChoiceField(
                 label = 'Select the campus instantiation to run the simulations',
@@ -190,39 +197,3 @@ class createSimulationForm(forms.Form):
                 choices=interventionChoices,
                 required=True,
             )
-
-#
-#     def clean(self):
-#         cleaned_data = super(addCampusDataForm, self).clean()
-#         numDays = self.cleaned_data.get('num_days')
-#         avg_no_associations = self.cleaned_data.get('avg_associations')
-#         minimum_grp_size = self.cleaned_data.get('min_grp_size')
-#         maximum_grp_size = self.cleaned_data.get('max_grp_size')
-#         betaScaleValue = self.cleaned_data.get('betaScale')
-#         periodicityValue = self.cleaned_data.get('periodicity')
-#
-#         if(numDays<1):
-#             raise forms.ValidationError('Number of Days should be atleast 1')
-#
-#         if(avg_no_associations<1):
-#             raise forms.ValidationError('Number of average associations should be atleast 1')
-#
-#         if(avg_no_associations>20):
-#             raise forms.ValidationError('Maximum limit for average associations is 20')
-#
-#         if(avg_no_associations>maximum_grp_size or avg_no_associations<minimum_grp_size):
-#             raise forms.ValidationError('Average number of associations should be between maximum and minimum group size')
-#
-#         if((betaScaleValue < 0) or (betaScaleValue > 1)):
-#             raise forms.ValidationError('Beta Scale should lie between 0 and 1')
-#
-#         if(minimum_grp_size <= 0 or minimum_grp_size >= maximum_grp_size):
-#             raise forms.ValidationError('Minimum Group size should be greater than 0 and less than Maximum Group size')
-#
-#         if(maximum_grp_size <= 0 or minimum_grp_size >= maximum_grp_size):
-#             raise forms.ValidationError('Maximum Group size should be greater than 0 and greater than Minimum Group size')
-#
-#         if(periodicityValue != 7):
-#             raise forms.ValidationError('Please set periodicity value to 7')
-#
-#         return cleaned_data

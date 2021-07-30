@@ -206,7 +206,7 @@ class campusInstantiation(models.Model):
             return self.objects.order_by('-pk')[0]
 
     def __str__(self):
-        return self.inst_name
+        return self.inst_name.campus_name
 
 ## defintion for storing the simulation parameters
 class simulationParams(models.Model):

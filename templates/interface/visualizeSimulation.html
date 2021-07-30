@@ -3,24 +3,35 @@
 {% block content %}
 <br>
 <h3>Visualization </h3>
+<p>Select one or more statistics to visualize them on graphs</p>
 <script src="{% static 'js/makePlots.js' %}"></script>
 
 <div class="row">
   <div class="col-sm-2">
-    <input type="checkbox" name="plot" id="option1" value="cases" class="custom" />
-    <label for="option1">Cases</label><br>
-    <input type="checkbox" name="plot" id="option2" value="affected" class="custom" />
-    <label for="option2">Affected</label><br>
-    <input type="checkbox" name="plot" id="option3" value="recovered" class="custom" />
-    <label for="option3">Recovered</label><br>
-    <input type="checkbox" name="plot" id="checkbox-4" value="cumulative_positive_cases" class="custom" />
-    <label for="checkbox-4">Cum. Positive Cases</label><br>
-    <input type="checkbox" name="plot" id="checkbox-5" value="people_tested" class="custom" />
-    <label for="checkbox-5">People Tested</label><br>
-    <br>
-    <input type="submit" value="Submit" class="btn btn-success btn-md" id="submitBtn"><br>
-    <a class="btn btn-md btn-warning" href="{% url 'profile' %}"><i class="fa fa-angle-left"> </i> Go Back to User Home</a>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="dailyRadio" value="daily" checked>
+        <label class="form-check-label" for="dailyRadio">Daily</label>
+      </div>
 
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="cumRadio" value="cumulative">
+        <label class="form-check-label" for="cumRadio">Cumulative</label>
+      </div>
+
+      <br>
+      <input type="checkbox" name="plot" id="checkbox-1" value="infected" class="custom" />
+      <label for="checkbox-1">Infected</label><br>
+      <input type="checkbox" name="plot" id="checkbox-2" value="recovered" class="custom" />
+      <label for="checkbox-2">Recovered</label><br>
+      <input type="checkbox" name="plot" id="checkbox-3" value="fatalities" class="custom" />
+      <label for="checkbox-3">Fatalities</label><br>
+      <input type="checkbox" name="plot" id="checkbox-4" value="positive_cases" class="custom" />
+      <label for="checkbox-4">Positive Cases</label><br>
+      <input type="checkbox" name="plot" id="checkbox-5" value="people_tested" class="custom" />
+      <label for="checkbox-5">Total tests</label><br>
+      <br>
+      <input type="submit" value="Submit" class="btn btn-success btn-md" id="submitBtn">
+      <a class="btn btn-md btn-warning" href="{% url 'profile' %}"><i class="fa fa-angle-left"> </i> Go Back to User Home</a>
   </div>
   <div class="col" id="target"></div>
 </div>
@@ -30,8 +41,13 @@
   $("#submitBtn").click(function () {
 
     $("#target").empty()
-    var options = [];
 
+    var plotOption = '';
+    $.each($("input[name='inlineRadioOptions']:checked"), function () {
+          plotOption = $(this).val();
+    });
+
+    var options = [];
     // Jquery for checkbox input
     $.each($("input[name='plot']:checked"), function () {
       options.push($(this).val());
@@ -39,12 +55,12 @@
 
 
     for (let i = 0; i < parseInt(options.length); i++) {
-      var mean_plus_std = x_data[options[i]].mean.map(function (num, idx) {
-          return num + x_data[options[i]].std[idx];
+      var mean_plus_std = x_data[plotOption][options[i]].mean.map(function (num, idx) {
+          return num + x_data[plotOption][options[i]].std[idx];
         });
 
-      var mean_minus_std = x_data[options[i]].mean.map(function (num, idx) {
-          return num - x_data[options[i]].std[idx];
+      var mean_minus_std = x_data[plotOption][options[i]].mean.map(function (num, idx) {
+          return num - x_data[plotOption][options[i]].std[idx];
         });
 
       var title = ""
@@ -54,7 +70,7 @@
       else{
         title = "Cumulative num. " + options[i] + "";
       }
-      var plotData = makeTraceTriplets(x_data.time, x_data[options[i]].mean, mean_plus_std, mean_minus_std, options[i],intervention=x_data['intervention'])
+      var plotData = makeTraceTriplets(x_data.time, x_data[plotOption][options[i]].mean, mean_plus_std, mean_minus_std, options[i],intervention=x_data['intervention'])
       var plotDiv = makePlot(plotData, title, options[i], i)
       document.getElementById("target").appendChild(plotDiv)
     }
