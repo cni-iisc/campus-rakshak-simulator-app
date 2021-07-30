@@ -18,18 +18,6 @@ The python packages required for running the interface is listed in `requirement
 
 > **NOTE:** This is a code release and the database configurations are currently the default, sqlite3 database. You may want to configure the database based on your requirements, more information on database configurations are available in [the official documentation of Django for databases](https://docs.djangoproject.com/en/3.2/ref/settings/#databases).
 
-#### Ubuntu/Debian
-If you are on a Debian, Ubuntu or a derivative of these Linux distributions, the deployment environment can be set-up using the script `install_deb_linux.sh`, using the command:
-
-```shell
-$ chmod +x ./install_deb_linux.sh
-$ sudo ./install_deb_linux.sh
-```
-This will install and setup all the required software dependencies and python packages, initializes the database and also prompts for the creation of a superuser account.
-
-#### Custom setup
-If the deployment operating system is different, please make sure that you have the software dependencies installed on the operating system.
-
 > **NOTE**: These steps are for the interface is alone, in the next release, we shall package the setup through a makefile to make it easy for setting both the application interface and the agent-based simulator.
 
 The next step will be to create a virtual environment, this is optional but is recommended. You can also you Anaconda or virtualenv for this step, but we use the built-in `venv` tool to create and activate a virtual environment called `env`.
@@ -54,7 +42,11 @@ Before going to the next step, let us fetch the code and build the executable fo
 (env) $ cd simulator/cpp-simulator
 (env) $ make -f Makefile_np
 ```
-
+> Note: On the production environment, do run the command 
+> ```shell
+>(env) $ python manage.py collectstatic
+>```
+> 
 The next step is to set-up the database schema and saving the schema to the database. This is done using the following sequence of commands:
 ```shell
 (env) $ python manage.py makemigrations
