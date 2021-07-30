@@ -15,21 +15,17 @@
                 <label class="col-sm-8 form-label" for="id_{{ field.name }}">
                     {{field.label}}
                     {% if field.help_text %}
-                        <a href="#"   data-mdb-html="true" data-mdb-toggle="tooltip"   data-mdb-placement="right" title="{{ field.help_text|safe }}"> <i class="fa fa-info-circle"></i></a>
+                        <a href="#" data-mdb-html="true" data-mdb-toggle="tooltip"   data-mdb-placement="right" title="{{ field.help_text|safe }}"> <i class="fa fa-info-circle"></i></a>
                     {% endif %}
                 </label>
                 {{ field }}
-
-                <!-- <div class="valid-feedback">
-                    Looks good!
-                </div> -->
             </div>
             {% endfor %}
-            <a class="btn btn-md btn-warning" href="{% url 'profile' %}"><i class="fa fa-angle-left"> </i> Go Back to User Home</a> 
+            <a class="btn btn-md btn-warning" href="{% url 'profile' %}"><i class="fa fa-angle-left"> </i> Go Back to User Home</a>
             <input type="submit" value="Submit" class="btn btn-success btn-md" onclick="$('#loading').show()">
 
         </form>
-    
+
 	<!-- Loader css -->
     	<div id="loading" style="display:none;">
     	    <div class="spinner-grow text-muted"></div>

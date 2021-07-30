@@ -18,7 +18,6 @@ var intv_sim_map = {
     "5": "selective_shutdown"
 };
 
-
 // This is populated based on the interaction space codes in simulator/cpp-simulator/models.h
 var interaction_space_map = {
     // "0": "No Off-campus visitors",
@@ -38,7 +37,7 @@ var interaction_space_map = {
 var count = 0;
 
 //function to layout the elements of an intervention block
-function makeInterventionLayout(count, elemId, values={}){
+function makeInterventionLayout(count, elemId){
     var li = $('<li>', {
         id: count,
         'class': 'interv-li'
@@ -77,21 +76,6 @@ function makeInterventionLayout(count, elemId, values={}){
         select.append(createOption(code, intv_code[code]))
     }
 
-    //TODO: if values['intervention'].length > 0
-    //TODO: set the select interventions as either value if length == 1 else set the selected attribute as true if the number of interventions is more than 1
-    // if(values['intervention'].length > 0){
-    //     if (values['intervention'].length > 1){
-    //         for(var e in values['intervention']){
-    //             select.options[values['intervention'][e]].selected = true
-    //         }
-    //     }
-    //     else{
-    //         select.value = values['intervention']
-    //     }
-    // }
-    // else{
-    //     select.value = 0
-    // }
 
     //Compliance probability input
     $("<label>", {
@@ -102,7 +86,6 @@ function makeInterventionLayout(count, elemId, values={}){
         'class': 'li-interv-time',
         'min': '0',
         'max': '1',
-        'value': values['compliance'] ? values['compliance'] : null,
         'step': '0.001',
         'type': 'number'
     }).appendTo(col3);
@@ -119,7 +102,6 @@ function makeInterventionLayout(count, elemId, values={}){
         'class': 'li-interv-time',
         'min': 1,
         'step': 1,
-        'value': values['num_days'] ? values['num_days'] : null,
         'type': 'number'
     }).appendTo(col3);
 
@@ -167,7 +149,7 @@ function makeInterventionLayout(count, elemId, values={}){
         return spaceli
     };
 
-    for (code in interaction_space_map){
+    for (let code in interaction_space_map){
         spaceList.append(createCheckbox(code, interaction_space_map[code]))
     }
 
@@ -182,40 +164,13 @@ function makeInterventionLayout(count, elemId, values={}){
     return li
 }
 
-
 //create new intervention -- for create view
 function newInterv(elemId){
-
-    var li = makeInterventionLayout(count, elemId)
+    var li = makeInterventionLayout(count, elemId);
     $("#interv").append(li);
-
     count++;
     elemId++;
     return elemId
-}
-
-//populate existing interventions -- for update view
-function existingInterv(jsonElem, jsonId, elemId){
-    var valDict = {}
-    valDict['num_days'] = jsonElem['num_days']
-    valDict['compliance'] = jsonElem['compliance']
-
-    var jsonKeys = []
-    for(var k in jsonElem){
-        for( var intElem in intv_sim_map){
-            if (intv_sim_map[intElem] == k & ((k != 'num_days') || (k != 'compliance'))){
-                console.log(k)
-                jsonKeys.push(intElem)
-            }
-        }
-    }
-    valDict['intervention'] = jsonKeys
-
-    //TODO: support the interaction spaces that were disabled
-
-     count++;
-     elemId++;
-     return elemId;
 }
 
 // make the intervention json by combining the intervention blocks
@@ -237,11 +192,9 @@ function intervention_json_gen(intv, complaince_probability, num_days, spaces) {
                                 "active" : true,
                                 "spaces": []
                             }
-                            for(e in spaces[j]){
+                            for(let e in spaces[j]){
                                 intv_json_const[[intv_sim_map[String(intv[j][i])]]]['spaces'].push(parseInt(spaces[j][e]));
                             }
-
-
                         }
                         else{
                             intv_json_const[[intv_sim_map[String(intv[j][i])]]] = {

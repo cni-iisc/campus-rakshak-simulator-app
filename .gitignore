@@ -1,8 +1,9 @@
 ### Custom IgnoreList ###
 media/campusData
 media/instantiation
-
-
+static/admin
+static/rest_framework
+log.txt
 
 ### Django ###
 *.log

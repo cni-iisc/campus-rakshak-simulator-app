@@ -1,172 +1,252 @@
 {% extends 'interface/base.html' %}
 {% load static %}
 {% block content %}
-<!-- //TODO: Refactor with form validation -->
-    <br>
-    <link rel="stylesheet" href="{% static 'css/interventions.css' %}">
-    <h3>Update an Existing Intervention</h3>
-    <div class="container">
+
+<br>
+<link rel='stylesheet' href="{% static 'css/interventions.css' %}">
+<h3>Update an existing intervention</h3>
+<p>Lets you update an intervention policy by varying the interventions active at specific durations, varying compliance of agents in the simulator. You can also add new intervention periods to the existing policy. For more information on the steps to update a custom intervention click the <strong>instructions</strong> button.<br>
+
+<!-- Button trigger modal -->
+<button
+  type="button"
+  class="btn btn-default"
+  data-mdb-toggle="modal"
+  data-mdb-target="#instructions"
+>
+ instructions
+</button>
+</p>
+<hr>
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="instructions"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Steps to create a custom intervention</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-mdb-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+          <ul>
+              <li>Give a name to the intervention to be created</li>
+              <li>Click on the Add Intervention button.</li>
+              <li> Enter the following parameters<br>
+                  <ol>
+                      <li><strong>Intervention</strong>: Select a single intervention or a combination of
+                          interventions through the multiselect option(click one option and drag to select
+                          multiple options).</li>
+                      <li><strong>Duration of intervention</strong>: Enter the number of days the intervention
+                          is imposed.</li>
+                      <li><strong>Compliance Probability</strong>: Enter the compliance value at which the
+                          intervention is imposed. Compliance value ranges between 0 and 1, where 1 indicates
+                          highest compliance.</li>
+                  </ol>
+              </li>
+              <li>A minimum of 1 intervention must be added.</li>
+          </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container">
     <div class="row">
-        <div class="col-8">
-            <form class="scroll">
+            <form id="intvForm" class="scroll">
+                <br>
                 <div class="form-row">
                     <label class="form-label col-sm-6" for="intvName">
-                        Name of the intervention: 
+                        Name of the intervention:
                     </label>
-                    <input type="text" name="intvName"  value="custom intervention" required="" id="intvName">
+                    <input type="text" name="intvName" value="custom intervention" required="" id="intvName">
                 </div>
+
                 <div class="form-group row" id="customIntv">
-
-                    <div id="interv">
-
-                    </div>
-
+                    <div id="interv"></div>
                 </div>
+
                 <div>
+                    &nbsp;
                     <button type="button" class="btn btn-info" id="intvButton">Add Intervention</button>
                 </div>
                 <br>
 
-                <a class="btn btn-md btn-warning" href="{% url 'profile' %}"><i class="fa fa-angle-left"> </i> Go Back to User Home</a>
-                <input class="btn btn-md btn-success" type="button" id="submit" value="submit" />
+                <a class="btn btn-md btn-warning" href="{% url 'profile' %}"><i class="fa fa-angle-left"> </i> Go Back
+                    to User Home</a>
+                <input class="btn btn-md btn-success" type="button" id="submit" value="submit"
+                    onclick="validate_and_submit()" />
 
             </form>
-        </div>
-        <div class="col">
-            <div class="card card-info">
-                <div class="card-header">
-                    <h5>Steps to build custom intervention</h5>
-                </div>
-                <div class="card-body">
-                    <ul>
-                        <li>Give a name to the intervention to be created</li>
-                        <li>Click on the Add Intervention button.</li>
-                       <li> Enter the following parameters<br>
-                            <ol>
-                                <li><strong>Intervention</strong>: Select a single intervention or a combination of interventions through the multiselect option(click one option and drag to select multiple options).</li>
-                                <li><strong>Duration of intervention</strong>: Enter the number of days the intervention is imposed.</li>
-                                <li><strong>Compliance Probability</strong>: Enter the compliance value at which the intervention is imposed. Compliance value ranges between 0 and 1, where 1 indicates highest compliance.</li>
-                            </ol>
-                        </li>
-                        <li>A minimum of 1 intervention must be added.</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+
     </div>
-    </div>
+</div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static 'js/interventions.js' %}"></script>
+<script>
+    var reverse_intv_sim_map = {
+        "no_intervention": "0",
+        "case_isolation": "1",
+        "class_isolation": "2",
+        "lockdown": "3",
+        "evacuation": "4",
+        "selective_shutdown" : "5"
+    };
 
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
-    <script src="{% static 'js/interventions.js' %}"></script>
-    <script>
-	var elemId = 0;
+    var msg = "Click the 'Add Intervention' button to set-up the simulator to run a custom intervention.<br>";
+    $("#interv").html(msg);
 
-    // var intvJSON = {{ intvJSON | safe  }};
-
-    var intvJSON = [
-    {
-        "num_days": 6,
-        "compliance": 0.5,
-        "lockdown": {
-            "active": true,
-        }
-    },
-    {
-       "num_days": 1,
-       "compliance": 0.5,
-       "selective_shutdown": {
-           "active": true,
-           "spaces": [1, 4, 5, 8]
-        }
-    },
-    {
-        "num_days": 6,
-        "compliance": 0.5,
-        "case_isolation": {
-            "active": true,
-        },
-        "class_isolation": {
-            "active": false,
-        }
-    },
-    {
-        "num_days": 6,
-        "no_intervention": {
-            "active": true,
-        },
-        "class_isolation": {
-            "active": true,
-        }
-    },
-    {
-        "num_days": 1,
-        "no_intervention": {
-            "active": true,
-        }
-    },
-];
-
-
+    var elemId = 0;
+    $("#intvName").val("{{ intvName | safe  }}");
+    var intvJSON = {{ intvJSON | safe  }};
 
     $("#interv-li").show();
     $("#customIntv").show();
-
+    console.log(intvJSON)
     for(var elem in intvJSON){
-        console.log(intvJSON[elem]);
-        elemId = existingInterv(intvJSON[elem], elem, elemId);
-        elemId += 1;
-    }
-    console.log(elemId)
-
-
-	var msg = "Click the 'Add Intervention' button to set-up the simulator to run a custom intervention.<br>";
-    $("#interv").html(msg);
-
-    $("#intvButton").on('click', function () {
-    newInterv(elemId)
-    });
-
-    $("#submit").on('click', function(){
-        var intvArr = [];
-        var numDaysArr = [];
-        var compProbArr = [];
-
-
-        const NO_INTERVENTION = 0
-        for (let i = 0; i < $(".interv-li").length; i++) {
-            //check if the values are filled or not
-            intvArr.push($("#mulIntv"+i).val());
-            numDaysArr.push($("#numDays"+i).val());
-            compProbArr.push($("#compProb"+i).val());
-        }
-
-        console.log(intvArr, compProbArr, numDaysArr)
-
-        $.ajax({
-            url:"{% url 'updateIntervention' pk %}",
-            type: "POST",
-            headers: {'X-CSRFToken': '{{ csrf_token }}'},
-            contentType: "application/json;charset=utf-8",
-            data: JSON.stringify({
-                "intvName": $("#intvName").val(),
-                "intvDict": intervention_json_gen(intvArr, compProbArr, numDaysArr)
-            }),
-            success:function(response){
-                alert("Intervention " + $("#intvName").val() + "is now updated in the database. You can use this interevention in simulation jobs.\n You will be redirected to the homepage, now.")
-                window.location.href="{% url 'profile' %}"
-                // console.log(response)
-            },
-            complete:function(){},
-            error:function (xhr, textStatus, thrownError){
-                alert("Error occured while updating Intervention " + $("#intvName").val() + "in the database. Please verify your inputs and try again")
-                console.log("error doing something");
+        // elemId = existingInterv(intvJSON[elem], elem, elemId);
+        elemId =  newInterv(elemId)
+        $("#compProb" + (elemId-1)).val(intvJSON[elem]['compliance'])
+        $("#numDays" + (elemId-1)).val(intvJSON[elem]['num_days'])
+        var jsonKeys = []
+        for(var k in intvJSON[elem]){
+            if ( reverse_intv_sim_map[k] && intvJSON[elem][k]['active']){
+                jsonKeys.push(reverse_intv_sim_map[k])
             }
-        });
+            if (k == 'selective_shutdown'){
+                if (intvJSON[elem][k]['spaces'].length > 0){
+                    $("#spaceDiv" + (elemId-1)).show()
+                    for(var i = 0; i < intvJSON[elem][k]['spaces'].length; i++){
+                        console.log(intvJSON[elem][k]['spaces'][i])
+                        $("#space" + intvJSON[elem][k]['spaces'][i]).attr("checked", "checked");
+                    }
+                }
+            }
+
+        }
+        if (jsonKeys.length > 1){
+            $("#mulIntv" + (elemId-1)).val(jsonKeys)
+        }
+        else{
+            $("#mulIntv" + (elemId-1)).val("0")
+        }
+    }
+
+    $('select').on('click', function () {
+        var selectedOption = $(this).val();
+        var eleIdx = $(this).attr('id').match(/\d+/g);
+        if (selectedOption.includes('5')) {
+            $("#spaceDiv" + eleIdx).show()
+        }
+        else {
+            $("#spaceDiv" + eleIdx).hide()
+        }
+    })
+
+
+
+
+    //arrays holding each intervention block's inputs
+    var intvArr = [];
+    var numDaysArr = [];
+    var compProbArr = [];
+    var spaces = []
+
+    //function to validate the inputs and populating the arrays
+    function areInputsValid() {
+        intvArr = [];
+        numDaysArr = [];
+        compProbArr = [];
+        spaces = []
+
+        for (let i = 0; i < $(".interv-li").length; i++) {
+            //get the inputs for each intervention block
+            var interventionList = $("#mulIntv" + i).val()
+            var numDaysVal = $("#numDays" + i).val()
+            var compProbVal = $("#compProb" + i).val()
+
+            var validation = ((interventionList.length > 0) && (numDaysVal.length > 0) && (compProbVal.length > 0) && (parseFloat(compProbVal) >= 0.0 && parseFloat(compProbVal) <= 1.0) && (parseInt(numDaysVal) >= 1))
+
+            if (validation) {
+                //check if the values are filled or not
+                intvArr.push(interventionList);
+                numDaysArr.push(parseInt(numDaysVal));
+                compProbArr.push(parseFloat(compProbVal));
+                var checkedSpaces = []
+                if ($("#spaceDiv" + i + "  :checkbox:checked").length > 0) {
+                    $("#spaceDiv" + i + "  :checkbox:checked").each(function () {
+                        checkedSpaces.push(parseInt($(this).val()));
+                    });
+                    spaces.push(checkedSpaces)
+                }
+                else {
+                    spaces.push(checkedSpaces)
+                }
+            }
+            else {
+                alert("Please check inputs are valid for the intervention block, " + i + 1 + "\n1. One or more interventions are selected. \n2. Compliance probability is a value between 0 and 1 . \n3. Number of days for applying the intervention is greater than or equal to 1. \n4.If Selective shutdown intervention is applied, then atleast one or more intereaction spaces must be selected.");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Create a new list itemwhen clicking on the "Add" button
+    $("#intvButton").on('click', function () {
+        elemId = newInterv(elemId)
+        $('select').on('click', function () {
+            var selectedOption = $(this).val();
+            var eleIdx = $(this).attr('id').match(/\d+/g);
+            if (selectedOption.includes('5')) {
+                $("#spaceDiv" + eleIdx).show()
+            }
+            else {
+                $("#spaceDiv" + eleIdx).hide()
+            }
+        })
     });
 
-    </script>
-
-
+    function validate_and_submit() {
+        console.log(areInputsValid())
+        if (intvArr.length> 0 && areInputsValid()){
+            $.ajax({
+                url:"{% url 'updateIntervention' pk %}",
+                type: "POST",
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+                contentType: "application/json;charset=utf-8",
+                data: JSON.stringify({
+                    "intvName": $("#intvName").val(),
+                    "intvDict": intervention_json_gen(intvArr, compProbArr, numDaysArr, spaces)
+                }),
+                success:function(response){
+                    alert("Intervention " + $("#intvName").val() + " is now added to the database. You can use this interevention in simulation jobs.\n You will be redirected to the homepage, now.")
+                    window.location.href="{% url 'profile' %}"
+                },
+                complete:function(){},
+                error:function (xhr, textStatus, thrownError){
+                    alert("Error occured while adding Intervention " + $("#intvName").val() + " to the database. Please verify your inputs and try again")
+                    console.log("error doing something");
+                }
+            });
+        }
+        else{
+            alert("Add atleast one or more intervention blocks")
+        }
+    }
+</script>
 
 {% endblock %}

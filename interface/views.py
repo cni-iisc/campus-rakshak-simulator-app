@@ -15,7 +15,7 @@ from django.views.generic.base import View
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import DeleteView
 from rest_framework import viewsets
-
+from django.utils.safestring import mark_safe
 
 #setting up logs
 import logging
@@ -238,8 +238,8 @@ class addDataView(LoginRequiredMixin, AddUserToContext, View):
     def render(self, request):
         context = {
             'form': self.form,
-            'title': 'add data files for campuses',
-            'instruction': 'additional descriptions',
+            'title': 'Create a new instatiation of a synthetic campus',
+            'instruction': mark_safe('Upload the required files in .csv format to instantiate a synthetic campus for running simulations.<br> For assistance with the expected files, please check the sample files linked with each file upload field.'),
             'instance': self.request.user
         }
         return render(request, self.template_name, context)
@@ -253,12 +253,13 @@ class addDataView(LoginRequiredMixin, AddUserToContext, View):
             self.campus_name = obj.campus_name
             obj.created_on = timezone.now()
             obj.save()
-            messages.info(request, f'Data for campus: { self.campus_name } is saved. Please wait while we run this job in the background, on an average you will hear from you us in 2 minutes if the servers are free.')
+            messages.success(request, f'Data for campus: { self.campus_name } is saved. Please wait while we run this job in the background, on an average you will hear from you us in 2 minutes if the servers are free.')
             log.info(f'Data for campus: { self.campus_name } is saved for user {self.request.user}. ')
             if self.instantiate():
                 return redirect('profile')
         else:
-            messages.error(request, f'Errors were encountered while saving data for campus: { self.campus_name }. Please check the inputs and try again')
+            error_string = ' '.join([' '.join(x for x in l) for l in list(self.form.errors.values())])
+            messages.error(request, f'While saving the data to the database the following errors were found: { error_string}')
             log.error(f'Errors were encountered while saving data for campus: { self.campus_name } on the database')
         return self.render(request)
 
@@ -275,7 +276,6 @@ class userActivityView(LoginRequiredMixin, AddUserToContext, TemplateView):
         context = super().get_context_data(**kwargs)
         context['interventions'] = interventions.get_all(self.request.user)
         context['simulations'] = simulationParams.get_all(self.request.user)
-        # context['instantiations'] = campusInstantiation.get_all(self.request.user)
         context['campuses'] = campusData.get_all(self.request.user)
         return context
 
@@ -339,7 +339,7 @@ class createIntervention(LoginRequiredMixin, AddUserToContext, TemplateView):
             created_on = timezone.now()
         )
         q.save()
-        log.info(f"Intervention { received_json['intvName'] } added to the database.")
+        log.info(f"Intervention { received_json['intvName'] } added to the database on { datetime.dateime.now() }")
         return render(request, self.template_name, self.get_context_data())
 
 
@@ -352,7 +352,9 @@ class updateIntervention(LoginRequiredMixin, AddUserToContext, TemplateView):
         context['pk'] = self.kwargs.get('pk')
         self.obj = interventions.objects.filter(pk=self.kwargs.get('pk')).first()
         context['intvJSON'] = self.obj.intv_json
+        context['intvName'] = str(self.obj.intv_name)
         return context
+
 
     def post(self, request, pk):
         body_unicode = request.body.decode('utf-8')
@@ -363,7 +365,7 @@ class updateIntervention(LoginRequiredMixin, AddUserToContext, TemplateView):
             created_by = self.request.user,
             updated_at = timezone.now()
         )
-        log.info(f'Intervention {self.obj.intv_name} created at {self.obj.created_on} was updated as {received_json["intvName"]}')
+        log.info(f"Intervention id { pk } was updated to { received_json['intvName'] } at  { datetime.datetime.now() }")
         return render(request, self.template_name, self.get_context_data())
 
 
@@ -373,8 +375,6 @@ class createSimulationView(LoginRequiredMixin, AddUserToContext, TemplateView):
     def render(self, request):
         context = {
             'form': self.form,
-            'title': 'Create simulation',
-            'instruction': 'set-up parameters to initialize and run the campus simulator',
             'instance': self.request.user
         }
         return render(request, self.template_name, context)

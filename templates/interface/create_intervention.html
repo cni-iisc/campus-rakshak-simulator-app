@@ -5,34 +5,66 @@
 <br>
 <link rel='stylesheet' href="{% static 'css/interventions.css' %}">
 <h3>Create a new intervention</h3>
-<div class="container">
+<p>Lets you create an intervention policy for specific durations with varying compliance of agents in the simulator. For more information on the steps to create a custom intervention click the <strong>instructions</strong> button.<br>
 
-    <div class="row card">
-        <div class="card-header">
-            <button class="btn btn-link" data-mdb-toggle="collapse"   data-mdb-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                <h6><i class="fa" aria-hidden="true"></i>  Steps to build custom intervention</h6>
-             </button>
-        </div>
-        <div class="card-body collapse in mt-3" id="collapseOne">
-            <ul>
-                <li>Give a name to the intervention to be created</li>
-                <li>Click on the Add Intervention button.</li>
-                <li> Enter the following parameters<br>
-                    <ol>
-                        <li><strong>Intervention</strong>: Select a single intervention or a combination of
-                            interventions through the multiselect option(click one option and drag to select
-                            multiple options).</li>
-                        <li><strong>Duration of intervention</strong>: Enter the number of days the intervention
-                            is imposed.</li>
-                        <li><strong>Compliance Probability</strong>: Enter the compliance value at which the
-                            intervention is imposed. Compliance value ranges between 0 and 1, where 1 indicates
-                            highest compliance.</li>
-                    </ol>
-                </li>
-                <li>A minimum of 1 intervention must be added.</li>
-            </ul>
-        </div>
+<!-- Button trigger modal -->
+<button
+  type="button"
+  class="btn btn-default"
+  data-mdb-toggle="modal"
+  data-mdb-target="#instructions"
+>
+ instructions
+</button>
+</p>
+<hr>
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="instructions"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Steps to create a custom intervention</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-mdb-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+          <ul>
+              <li>Give a name to the intervention to be created</li>
+              <li>Click on the Add Intervention button.</li>
+              <li> Enter the following parameters<br>
+                  <ol>
+                      <li><strong>Intervention</strong>: Select a single intervention or a combination of
+                          interventions through the multiselect option(click one option and drag to select
+                          multiple options).</li>
+                      <li><strong>Duration of intervention</strong>: Enter the number of days the intervention
+                          is imposed.</li>
+                      <li><strong>Compliance Probability</strong>: Enter the compliance value at which the
+                          intervention is imposed. Compliance value ranges between 0 and 1, where 1 indicates
+                          highest compliance.</li>
+                  </ol>
+              </li>
+              <li>A minimum of 1 intervention must be added.</li>
+          </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">
+          Close
+        </button>
+      </div>
     </div>
+  </div>
+</div>
+<div class="container">
     <div class="row">
             <form id="intvForm" class="scroll">
                 <br>
