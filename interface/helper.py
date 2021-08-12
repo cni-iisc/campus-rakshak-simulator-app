@@ -112,11 +112,14 @@ def run_aggregate_sims(simPK):
     #remove simulation result
     os.system(f"rm -rf { dirName }*")
 
-    fatalities["cumulative_fatalities"] = fatalities["num_fatalities"].cumsum()
-    recovered["cumulative_recovered"] = recovered["num_recovered"].cumsum()
-    disease_label_stats['cumulative_tests'] = disease_label_stats['requested_tests'].cumsum()
-    disease_label_stats['daily_positive_cases'] = disease_label_stats['cumulative_positive_cases'].diff()
-
+    fatalities["daily_fatalities"] = fatalities["num_fatalities"].diff().fillna(0)
+    recovered["daily_recovered"] = recovered["num_recovered"].diff().fillna(0)
+    disease_label_stats['cumulative_tests'] = disease_label_stats['people_tested']
+    disease_label_stats['daily_positive_cases'] = disease_label_stats['cumulative_positive_cases'].diff().fillna(0)
+    #forcing initial negative values to zero
+    fatalities["daily_fatalities"][fatalities["daily_fatalities"]<0]=0
+    recovered["daily_recovered"][recovered["daily_recovered"]<0]=0
+    disease_label_stats['daily_positive_cases'][disease_label_stats['daily_positive_cases']<0]=0
 
     #aggregate the data
     affected = affected.groupby(by=['Time']).agg(['std', 'mean']).reset_index()
@@ -136,16 +139,17 @@ def run_aggregate_sims(simPK):
         "time": affected['Time'].values.tolist(),
         "daily": {
                 "infected":{
-                    "mean":affected['num_affected_mean'].values.tolist(),
-                    "std":affected['num_affected_std'].values.tolist()
+                    "mean": cases['num_cases_mean'].values.tolist(),
+                    "std": cases['num_cases_std'].values.tolist()
                 },
                 "recovered":{
-                    "mean": recovered['num_recovered_mean'].values.tolist(),
-                    "std": recovered['num_recovered_std'].values.tolist()
+                    "mean": recovered['daily_recovered_mean'].values.tolist(),
+                    "std": recovered['daily_recovered_std'].values.tolist()  
                 },
                 "fatalities":{
-                    "mean": fatalities['num_fatalities_mean'].values.tolist(),
-                    "std": fatalities['num_fatalities_std'].values.tolist()
+                    "mean": fatalities['daily_fatalities_mean'].values.tolist(),
+                    "std": fatalities['daily_fatalities_std'].values.tolist()
+                    
                 },
                 "positive_cases":{
                     "mean": disease_label_stats['daily_positive_cases_mean'].values.tolist(),
@@ -159,16 +163,16 @@ def run_aggregate_sims(simPK):
         "cumulative": {
 
                     "infected":{
-                        "mean": cases['num_cases_mean'].values.tolist(),
-                        "std": cases['num_cases_std'].values.tolist()
+                        "mean":affected['num_affected_mean'].values.tolist(),
+                        "std":affected['num_affected_std'].values.tolist()
                     },
                     "recovered":{
-                        "mean": recovered['cumulative_recovered_mean'].values.tolist(),
-                        "std": recovered['cumulative_recovered_std'].values.tolist()
+                        "mean": recovered['num_recovered_mean'].values.tolist(),
+                        "std": recovered['num_recovered_std'].values.tolist()
                     },
                     "fatalities":{
-                        "mean": fatalities['cumulative_fatalities_mean'].values.tolist(),
-                        "std": fatalities['cumulative_fatalities_std'].values.tolist()
+                        "mean": fatalities['num_fatalities_mean'].values.tolist(),
+                        "std": fatalities['num_fatalities_std'].values.tolist()
                     },
                     "positive_cases":{
                         "mean": disease_label_stats['cumulative_positive_cases_mean'].values.tolist(),
