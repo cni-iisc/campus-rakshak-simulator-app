@@ -39,13 +39,15 @@
 <script>
   var x_data = {{ results|safe }};
   $("#submitBtn").click(function () {
-
+    console.log(x_data);
+    
     $("#target").empty()
 
     var plotOption = '';
     $.each($("input[name='inlineRadioOptions']:checked"), function () {
           plotOption = $(this).val();
     });
+    console.log(x_data[plotOption]);
 
     var options = [];
     // Jquery for checkbox input
@@ -65,8 +67,9 @@
 
       var title = ""
 
-      if (options[i] == 'cases'){
-        title  = "Daily new positive " + options[i] + " ";}
+      if (plotOption == 'daily'){
+        title  = "Daily new positive " + options[i] + " ";
+      }
       else{
         title = "Cumulative num. " + options[i] + "";
       }

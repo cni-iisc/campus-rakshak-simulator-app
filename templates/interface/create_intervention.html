@@ -72,7 +72,7 @@
                     <label class="form-label col-sm-6" for="intvName">
                         Name of the intervention:
                     </label>
-                    <input type="text" name="intvName" value="custom intervention" required="" id="intvName">
+                    <input type="text" name="intvName" value="customIntervention" required="" id="intvName">
                 </div>
 
                 <div class="form-group row" id="customIntv">
@@ -167,6 +167,9 @@
 
     function validate_and_submit() {
         console.log(areInputsValid())
+        var IntvName=$("#intvName").val();
+        IntvName = IntvName.replace(/ /g,"_");
+        // var IntvNamenSpaces=myString.replace(/ /g,'_')
         if (intvArr.length> 0 && areInputsValid()){
             $.ajax({
                 url:"{% url 'createIntervention' %}",
@@ -174,7 +177,7 @@
                 headers: {'X-CSRFToken': '{{ csrf_token }}'},
                 contentType: "application/json;charset=utf-8",
                 data: JSON.stringify({
-                    "intvName": $("#intvName").val(),
+                    "intvName": IntvName,
                     "intvDict": intervention_json_gen(intvArr, compProbArr, numDaysArr, spaces)
                 }),
                 success:function(response){
