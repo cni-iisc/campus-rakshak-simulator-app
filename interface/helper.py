@@ -89,6 +89,10 @@ def validateFormResponse(formData):
         return False
     return True
 
+# Altering diff function
+# def my_diff():
+
+    
 
 ### Function to aggregate resutls from specified number of simulatoin iterations and serialize
 def run_aggregate_sims(simPK):
@@ -109,19 +113,64 @@ def run_aggregate_sims(simPK):
         recovered = pd.concat([recovered, pd.read_csv(f"{ dirName }_id_{ i }/num_recovered.csv")], ignore_index=True)
         disease_label_stats = pd.concat([disease_label_stats, pd.read_csv(f"{ dirName }_id_{ i }/disease_label_stats.csv")], ignore_index=True)
 
-    #remove simulation result
-    os.system(f"rm -rf { dirName }*")
+    # Added by Prashanth and Nihesh to fix plotting issues...
+    num_days = int(len(affected)/(num_iterations*4))
+    time_indexes = np.tile(np.arange(num_days),num_iterations) 
+    daily_indexes = np.arange(0,len(affected),4)
+    
+    cumulative_affected_day = affected["num_affected"].loc[daily_indexes].reset_index(drop=True)
+    cumulative_cases_day = cumulative_affected_day
+    cumulative_fatalities_day = fatalities["num_fatalities"].loc[daily_indexes].reset_index(drop=True)
+    cumulative_recovered_day = recovered["num_recovered"].loc[daily_indexes].reset_index(drop=True)
 
-    fatalities["daily_fatalities"] = fatalities["num_fatalities"].diff().fillna(0)
-    recovered["daily_recovered"] = recovered["num_recovered"].diff().fillna(0)
+
+    daily_affected = cumulative_affected_day.diff()
+    daily_fatalities = cumulative_fatalities_day.diff()
+    daily_recovered = cumulative_recovered_day.diff()
+
+    for i in range(0,num_iterations):
+        daily_affected.at[i*num_days] = cumulative_affected_day.loc[i*num_days]
+        daily_fatalities.at[i*num_days] = cumulative_fatalities_day.loc[i*num_days]
+        daily_recovered.at[i*num_days] = cumulative_recovered_day.loc[i*num_days]
+    daily_cases = daily_affected
+    
+    # remove simulation result
+    # os.system(f"rm -rf { dirName }*")
+
+    # fatalities["daily_fatalities"] = fatalities["num_fatalities"].diff().fillna(0)
+    # recovered["daily_recovered"] = recovered["num_recovered"].diff().fillna(0)
     disease_label_stats['cumulative_tests'] = disease_label_stats['people_tested']
     disease_label_stats['daily_positive_cases'] = disease_label_stats['cumulative_positive_cases'].diff().fillna(0)
-    #forcing initial negative values to zero
-    fatalities["daily_fatalities"][fatalities["daily_fatalities"]<0]=0
-    recovered["daily_recovered"][recovered["daily_recovered"]<0]=0
+    
+
+    # Added by Prashanth and Nihesh to fix plotting issues...
+    # Converting arrays to dataframes and adding time indexes... 
+    affected_day = pd.DataFrame({'Time': time_indexes, 'daily_affected': daily_affected, 'num_affected': cumulative_affected_day}) 
+    recovered_day = pd.DataFrame({'Time': time_indexes, 'daily_recovered': daily_recovered, 'num_recovered': cumulative_recovered_day}) 
+    fatalities_day = pd.DataFrame({'Time': time_indexes, 'daily_fatalities': daily_fatalities, 'num_fatalities': cumulative_fatalities_day}) 
+    cases_day = pd.DataFrame({'Time': time_indexes, 'num_cases': daily_cases, 'cumulative_cases': cumulative_cases_day}) 
+    
+    # fatalities["daily_fatalities"] = daily_fatalities
+    # recovered['daily_recovered'] = daily_recovered
+    
     disease_label_stats['daily_positive_cases'][disease_label_stats['daily_positive_cases']<0]=0
+    
 
     #aggregate the data
+    affected = affected_day.groupby(by=['Time']).agg(['std', 'mean']).reset_index()
+    affected.columns = ['_'.join(filter(None, col)).strip() for col in affected.columns.values]
+    cases = cases_day.groupby(by=['Time']).agg(['std', 'mean']).reset_index()
+    cases.columns = ['_'.join(filter(None, col)).strip() for col in cases.columns.values]
+    fatalities = fatalities_day.groupby(by=['Time']).agg(['std', 'mean']).reset_index()
+    fatalities.columns = ['_'.join(filter(None, col)).strip() for col in fatalities.columns.values]
+    recovered = recovered_day.groupby(by=['Time']).agg(['std', 'mean']).reset_index()
+    recovered.columns = ['_'.join(filter(None, col)).strip() for col in recovered.columns.values]
+    disease_label_stats = disease_label_stats.groupby(by=['Time']).agg(['std', 'mean']).reset_index()
+    disease_label_stats.columns = ['_'.join(filter(None, col)).strip() for col in disease_label_stats.columns.values]
+
+
+    #aggregate the data
+    '''
     affected = affected.groupby(by=['Time']).agg(['std', 'mean']).reset_index()
     affected.columns = ['_'.join(filter(None, col)).strip() for col in affected.columns.values]
     cases = cases.cumsum().diff(periods=4)
@@ -133,6 +182,7 @@ def run_aggregate_sims(simPK):
     recovered.columns = ['_'.join(filter(None, col)).strip() for col in recovered.columns.values]
     disease_label_stats = disease_label_stats.groupby(by=['Time']).agg(['std', 'mean']).reset_index()
     disease_label_stats.columns = ['_'.join(filter(None, col)).strip() for col in disease_label_stats.columns.values]
+    '''
 
     data = {
         "intervention": simulationParams.objects.get(id=simPK).intervention.intv_name,
