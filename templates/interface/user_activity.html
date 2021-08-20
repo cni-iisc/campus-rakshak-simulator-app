@@ -36,7 +36,7 @@
 					<th>Action</th>
 					<th>Remove</th>
 				</tr>
-                {% for job in campuses %}
+                {% for job in campuses reversed %}
 				<tr>
 					<td>{{job}}</td>
 					<td>Instantiated Campus</td>
@@ -47,7 +47,7 @@
 					<td><a class="btn btn-sm btn-danger" href="{% url 'delCampusData' job.pk %}">Remove</a></td>
 				</tr>
 				{% endfor %}
-                {% for job in simulations %}
+                {% for job in simulations reversed %}
 				<tr>
 					<td>{{job}}</td>
 					<td>Simulations</td>
@@ -63,7 +63,7 @@
 					<td><a class="btn btn-sm btn-danger" href="{% url 'deleteSimulation' job.pk %}">Remove</a></td>
 				</tr>
                 {% endfor %}
-                {% for job in interventions %}
+                {% for job in interventions reversed %}
 				<tr>
 					<td>{{job}}</td>
 					<td>Custom Intervention</td>

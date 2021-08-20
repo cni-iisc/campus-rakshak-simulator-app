@@ -49,7 +49,7 @@
 					<th>Visualize</th>
 					<th>Remove</th>
 				</tr>
-                {% for job in simulations %}
+                {% for job in simulations reversed %}
 				<tr>
 					<td>{{job}}</td>
 					<td>{{job.created_on}}</td>
