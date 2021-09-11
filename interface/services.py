@@ -118,6 +118,7 @@ def instantiateTask(request):
         'staff': pd.read_csv(StringIO(obj.inst_name.staff_csv.read().decode('utf-8')), delimiter=',').to_dict(),
         'mess': pd.read_csv(StringIO(obj.inst_name.mess_csv.read().decode('utf-8')), delimiter=',').to_dict(),
         'common_areas': pd.read_csv(StringIO(obj.inst_name.common_areas_csv.read().decode('utf-8')), delimiter=',').to_dict(),
+        'campus_setup' : pd.read_csv(StringIO(obj.inst_name.campus_setup_csv.read().decode('utf-8')), delimiter=',').to_dict(),
         'objid': obj.id
     }
     campusInstantiation.objects.filter(created_by=user, id=obj.id).update(status='Running')

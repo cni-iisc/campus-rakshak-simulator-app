@@ -105,6 +105,7 @@ def set_upload_path(instance, filename):
     return '/'.join(['campusData', f"{ datetime.datetime.today().strftime('%Y%m%d') }", instance.campus_name.replace(' ', '_'), filename])
 
 class campusData(models.Model):
+    campus_setup_csv = models.FileField(upload_to=set_upload_path, null=True)
     students_csv = models.FileField(upload_to=set_upload_path, null=True)
     staff_csv = models.FileField(upload_to=set_upload_path, null=True)
     mess_csv = models.FileField(upload_to=set_upload_path, null=True)

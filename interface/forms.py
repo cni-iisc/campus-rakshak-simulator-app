@@ -73,7 +73,7 @@ class EditUserForm(forms.ModelForm):
 class addCampusDataForm(forms.ModelForm):
     class Meta:
         model = campusData
-        fields = ('campus_name', 'classes_csv', 'common_areas_csv', 'mess_csv', 'staff_csv', 'students_csv', 'timetable_csv')
+        fields = ('campus_name', 'classes_csv', 'common_areas_csv', 'mess_csv', 'staff_csv', 'students_csv', 'timetable_csv', 'campus_setup_csv')
         labels = {
             "campus_name": mark_safe("Name for the instatiation"),
             "classes_csv": mark_safe("This contains Class index, Class Strength, Duration, Faculty, Type of class, days.<br> <small>View Sample <a target='_blank' href='/static/sampleData/classes.csv'>Class Detail file</a></small><br>"),
@@ -81,7 +81,8 @@ class addCampusDataForm(forms.ModelForm):
             "mess_csv": mark_safe("This contains Mess index,active duration of the mess, and the average time spent in the mess.<br> <small>View Sample <a target='_blank' href='/static/sampleData/mess.csv'>Mess details file</a></small><br>"),
             "staff_csv": mark_safe("This contains Staff index and the department they are associated with, along with their interaction space.<br> <small>View Sample <a target='_blank' href='/static/sampleData/staff.csv'>Staff detail file</a></small><br>"),
             "students_csv": mark_safe("This contains Student index, Hostel index, Mess index, Department index.<br> <small>View Sample <a target='_blank' href='/static/sampleData/student.csv'>Student Detail file</a></small><br>"),
-            "timetable_csv": mark_safe("This contains Student index, and the subsequent columns will have the list of classes they take.<br> <small>View Sample <a target='_blank' href='/static/sampleData/timetable.csv'>Timetable detail file</a></small><br>")
+            "timetable_csv": mark_safe("This contains Student index, and the subsequent columns will have the list of classes they take.<br> <small>View Sample <a target='_blank' href='/static/sampleData/timetable.csv'>Timetable detail file</a></small><br>"),
+            "campus_setup_csv" : mark_safe("Fill in the description and get the sample file. <br> <small>View Sample <a target='_blank' href='/static/sampleData/timetable.csv'>Campus Setup detail file</a></small><br>")
         }
 
     def clean(self):
