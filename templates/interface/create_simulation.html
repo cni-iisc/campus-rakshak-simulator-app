@@ -56,7 +56,7 @@
             $.get("/api/campus/"+ campusName +"/", function( data ) {
                 console.log(data)
                 transCoeffFile = JSON.parse(data['trans_coeff_file']);
-
+                console.log(transCoeffFile)
             for(var i=0; i<transCoeffFile.length; i++){
                 var element = transCoeffFile[i];
                 if(element['name'] != 'Day Scholar'){

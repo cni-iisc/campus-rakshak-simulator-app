@@ -82,7 +82,7 @@ class addCampusDataForm(forms.ModelForm):
             "staff_csv": mark_safe("This contains Staff index and the department they are associated with, along with their interaction space.<br> <small>View Sample <a target='_blank' href='/static/sampleData/staff.csv'>Staff detail file</a></small><br>"),
             "students_csv": mark_safe("This contains Student index, Hostel index, Mess index, Department index.<br> <small>View Sample <a target='_blank' href='/static/sampleData/student.csv'>Student Detail file</a></small><br>"),
             "timetable_csv": mark_safe("This contains Student index, and the subsequent columns will have the list of classes they take.<br> <small>View Sample <a target='_blank' href='/static/sampleData/timetable.csv'>Timetable detail file</a></small><br>"),
-            "campus_setup_csv" : mark_safe("Fill in the description and get the sample file. <br> <small>View Sample <a target='_blank' href='/static/sampleData/timetable.csv'>Campus Setup detail file</a></small><br>")
+            "campus_setup_csv" : mark_safe("This contains the name of the university and procured the calibrated contact rates from the developers. <br> <small>View Sample <a target='_blank' href='/static/sampleData/campus_setup.csv'>Campus Setup detail file</a></small><br>")
         }
 
     def clean(self):

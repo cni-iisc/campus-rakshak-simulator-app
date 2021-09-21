@@ -21,6 +21,7 @@ log = logging.getLogger('celery_log')
 
 ## Custom modules taken from submodule
 from simulator.staticInst.campus_parse_and_instantiate import campus_parse
+from simulator.staticInst.default_betas import default_betas
 
 
 @app.task()
@@ -35,8 +36,14 @@ def run_instantiate(inputFiles):
     inputFiles['staff'] = pd.DataFrame.from_dict(inputFiles['staff'])
     inputFiles['mess'] = pd.DataFrame.from_dict(inputFiles['mess'])
     inputFiles['common_areas'] = pd.DataFrame.from_dict(inputFiles['common_areas'])
+    inputFiles['campus_setup'] = pd.DataFrame.from_dict(inputFiles['campus_setup'])
+    campusSetupDf = pd.DataFrame(inputFiles['campus_setup'])
     try:
-        individuals, interactionSpace, transCoeff =  campus_parse(inputFiles)
+        individuals, interactionSpace, transCoeff2 =  campus_parse(inputFiles)
+        # print("\nPrinting Input Files\n")
+        # print(inputFiles)
+        # print(campusSetupDf)
+        transCoeff = default_betas(campusSetupDf)
 
         indF = StringIO(json.dumps(individuals, default=convert))
         intF = StringIO(json.dumps(interactionSpace, default=convert))
