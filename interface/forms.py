@@ -97,12 +97,14 @@ class addCampusDataForm(forms.ModelForm):
             mess_csv = pd.read_csv(self.cleaned_data.get('mess_csv'))
             staff_csv = pd.read_csv(self.cleaned_data.get('staff_csv'))
             students_csv = pd.read_csv(self.cleaned_data.get('students_csv'))
+            campus_setup_csv = pd.read_csv(self.cleaned_data.get('campus_setup_csv'))
 
             expected_classes_cols = ['class_id', 'dept', 'faculty_id', 'active_duration', 'days']
             expected_common_areas_cols = ['type', 'number', 'average_time_spent', 'starting_id','active_duration']
             expected_mess_cols = ['mess_id', 'active_duration', 'average_time_spent']
             expected_staff_cols = ['staff_id', 'dept_associated', 'interaction_space', 'residence_block', 'adult_family_members', 'num_children']
             expected_students_cols = ['id', 'age', 'hostel', 'mess', 'dept_id']
+            expected_campus_setup_cols = ['name','beta_hostel','beta_classroom','beta_residential_block']
 
 
             if not set(expected_classes_cols).issubset(classes_csv.columns.tolist()):
@@ -115,6 +117,8 @@ class addCampusDataForm(forms.ModelForm):
                 raise ValidationError({"staff_csv": "One or more required columns names are missing in staff.csv. Please refer the sample file and re-upload"})
             if not set(expected_students_cols).issubset(students_csv.columns.tolist()):
                 raise ValidationError({"students_csv": "One or more required columns names are missing in students.csv. Please refer the sample file and re-upload"})
+            if not set(expected_campus_setup_cols).issubset(campus_setup_csv.columns.tolist()):
+                raise ValidationError({"campus_setup_csv": "One or more required columns names are missing in campus_setup.csv. Please refer the sample file and re-upload"})
         except:
             raise ValidationError(_("Ensure files uploaded are only in .csv format"))
         return cleaned_data
