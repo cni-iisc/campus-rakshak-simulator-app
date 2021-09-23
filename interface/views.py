@@ -396,10 +396,10 @@ class createSimulationView(LoginRequiredMixin, AddUserToContext, TemplateView):
                         _, betaType = key.split('_')
                         BETA.append({
                                 'type': int(betaType),
-                                'beta': float(formData[key][0]),
+                                'beta': formData[key][0],
                                 'alpha': 1 #TODO: get it from the ajax form
                             })
-
+                
                 testing = False
                 if formData['enable_testing'][0] == 'on':
                     testing = True

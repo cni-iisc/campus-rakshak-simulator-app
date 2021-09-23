@@ -80,8 +80,8 @@ def updateTransCoeff(campusId, BETA):
     for i in range(len(BETA)):
         for e in transmission_coefficients_json:
            if (e['type'] == BETA[i]['type']):
-               if e['beta'] != int(BETA[i]['beta']):
-                    e['beta'] = int(BETA[i]['beta']) #TODO: Add ALPHA parameter when it is available
+               if e['beta'] != float(BETA[i]['beta']):
+                    e['beta'] = float(BETA[i]['beta']) #TODO: Add ALPHA parameter when it is available
 
     campusInstantiation.objects.filter(id=campusId).update(
         trans_coeff_file=json.dumps(
