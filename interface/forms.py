@@ -185,7 +185,41 @@ class createSimulationForm(forms.Form):
         initial="1",
         required=True,
     )
-
+    restart = forms.BooleanField(
+        label="Restart - Are Students Returning back to campus?",
+        initial=False,
+        required=True
+    )
+    restart_batch_size = forms.IntegerField(
+        label="Restart Batch Size",
+        initial=1000,
+        required=True
+    )
+    restart_batch_frequency = forms.IntegerField(
+        label="Number of days between each batch",
+        initial=30,
+        required=True
+    )
+    vax = forms.BooleanField(
+        label="Is there a Vaccine Drive?",
+        initial=False,
+        required=True
+    )
+    vaccination_frequency = forms.IntegerField(
+        label="Number of days between each vaccination drive",
+        initial=7,
+        required=True
+    )
+    vax_restart_delay = forms.IntegerField(
+        label="Number of days between incomming batch and their vaccination",
+        initial=1,
+        required=True
+    )
+    daily_vaccination_capacity = forms.IntegerField(
+        label="Daily Vaccination Capacity",
+        initial=200,
+        required=True
+    )
 
     def __init__(self, campus_queryset, intv_queryset, *args, **kwargs):
         super(createSimulationForm, self).__init__(*args, **kwargs)

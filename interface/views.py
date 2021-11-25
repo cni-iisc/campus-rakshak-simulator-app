@@ -386,6 +386,7 @@ class createSimulationView(LoginRequiredMixin, AddUserToContext, TemplateView):
         return context
 
     def post(self, request):
+        print("CreateSimulationPostCalled")
         if request.method == 'POST':
             formData = dict(request.POST)
             print(validateFormResponse(formData))
@@ -401,8 +402,25 @@ class createSimulationView(LoginRequiredMixin, AddUserToContext, TemplateView):
                             })
                 
                 testing = False
-                if formData['enable_testing'][0] == 'on':
-                    testing = True
+                try:
+                    if formData['enable_testing'][0] == 'on':
+                        testing = True
+                except:
+                    testing=False
+                print(formData)
+                restart_value = 0
+                try:
+                    if formData['restart'][0] == 'on':
+                        restart_value = 1
+                except:
+                    restart_value=0
+
+                vax_value = 0
+                try:
+                    if formData['vax'][0] == 'on':
+                        vax_value = 1
+                except:
+                    vax_value=0
 
                 self.simName = formData['simulation_name'][0]
 
@@ -432,6 +450,13 @@ class createSimulationView(LoginRequiredMixin, AddUserToContext, TemplateView):
                     max_grp_size=int(formData['max_grp_size'][0]),
                     avg_associations=int(formData['avg_associations'][0]),
                     minimum_hostel_time=float(formData['minimum_hostel_time'][0]),
+                    restart=restart_value,
+                    restart_batch_size=int(formData['restart_batch_size'][0]),
+                    restart_batch_frequency=int(formData['restart_batch_frequency'][0]),
+                    vax=vax_value,
+                    vaccination_frequency=int(formData['vaccination_frequency'][0]),
+                    vax_restart_delay=int(formData['vax_restart_delay'][0]),
+                    daily_vaccination_capacity=int(formData['daily_vaccination_capacity'][0]),
                     created_by=self.request.user,
                     created_on=timezone.now(),
                     status='Created'
