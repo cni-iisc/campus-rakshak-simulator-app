@@ -21,6 +21,7 @@
 
             </div>
             {% endfor %}
+            <h4>Transmission Coefficients</h4>
             </div>
 
         <a class="btn btn-md btn-warning" href="{% url 'profile' %}"><i class="fa fa-angle-left"> </i> Go Back to User Home</a>
@@ -68,7 +69,7 @@
                     $('<label>').attr({
                         class:"col-8 form-label",
                         for:"id_"+ element['type']
-                    }).append("Transmission Coefficients for " + element['name'] + " interaction space").appendTo(formDiv)
+                    }).append("For " + element['name'] + " interaction space").appendTo(formDiv)
 
                     var input = $('<input>').attr({
                         type: 'text',

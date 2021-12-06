@@ -114,7 +114,7 @@ class LogInView(AnonymousRequired, FormView):
         return super().dispatch(*args, **kwargs)
 
     def get_success_url(self):
-        url = self.request.GET.get('next', reverse('profile'))
+        url = self.request.GET.get('next', reverse('about'))
         return url
 
     def form_valid(self, form):
