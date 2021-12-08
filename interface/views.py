@@ -434,33 +434,38 @@ class createSimulationView(LoginRequiredMixin, AddUserToContext, TemplateView):
                     )
                     obj.save()
 
-                q = simulationParams(
-                    simulation_name=self.simName,
-                    days_to_simulate=int(formData['num_days'][0]),
-                    init_infected_seed=int(formData['num_init_infected'][0]),
-                    simulation_iterations=int(formData['num_iterations'][0]),
-                    campus_instantiation=campusInstantiation.objects.get(id=int(formData['instantiatedCampus'][0])),
-                    intervention=interventions.objects.get(id=int(formData['intvName'][0])),
-                    enable_testing=testing, #eval ensures the form data is a boolean and not a string
-                    testing_capacity=int(formData['testing_capacity'][0]),
-                    testing_protocol=testingParams.objects.get(testing_protocol_name='default'), #By default: the default testing protocol will be aded.
-                    periodicity=int(formData['periodicity'][0]),
-                    betaScale=int(formData['betaScale'][0]),
-                    min_grp_size=int(formData['min_grp_size'][0]),
-                    max_grp_size=int(formData['max_grp_size'][0]),
-                    avg_associations=int(formData['avg_associations'][0]),
-                    minimum_hostel_time=float(formData['minimum_hostel_time'][0]),
-                    restart=restart_value,
-                    restart_batch_size=int(formData['restart_batch_size'][0]),
-                    restart_batch_frequency=int(formData['restart_batch_frequency'][0]),
-                    vax=vax_value,
-                    vaccination_frequency=int(formData['vaccination_frequency'][0]),
-                    vax_restart_delay=int(formData['vax_restart_delay'][0]),
-                    daily_vaccination_capacity=int(formData['daily_vaccination_capacity'][0]),
-                    created_by=self.request.user,
-                    created_on=timezone.now(),
-                    status='Created'
-                )
+                try:
+                    q = simulationParams(
+                        simulation_name=self.simName,
+                        days_to_simulate=int(formData['num_days'][0]),
+                        init_infected_seed=int(formData['num_init_infected'][0]),
+                        simulation_iterations=int(formData['num_iterations'][0]),
+                        campus_instantiation=campusInstantiation.objects.get(id=int(formData['instantiatedCampus'][0])),
+                        intervention=interventions.objects.get(id=int(formData['intvName'][0])),
+                        enable_testing=testing, #eval ensures the form data is a boolean and not a string
+                        testing_capacity=int(formData['testing_capacity'][0]),
+                        testing_protocol=testingParams.objects.get(testing_protocol_name='default'), #By default: the default testing protocol will be aded.
+                        periodicity=int(formData['periodicity'][0]),
+                        betaScale=int(formData['betaScale'][0]),
+                        min_grp_size=int(formData['min_grp_size'][0]),
+                        max_grp_size=int(formData['max_grp_size'][0]),
+                        avg_associations=int(formData['avg_associations'][0]),
+                        minimum_hostel_time=float(formData['minimum_hostel_time'][0]),
+                        restart=restart_value,
+                        restart_batch_size=int(formData['restart_batch_size'][0]),
+                        restart_batch_frequency=int(formData['restart_batch_frequency'][0]),
+                        vax=vax_value,
+                        vaccination_frequency=int(formData['vaccination_frequency'][0]),
+                        vax_restart_delay=int(formData['vax_restart_delay'][0]),
+                        daily_vaccination_capacity=int(formData['daily_vaccination_capacity'][0]),
+                        created_by=self.request.user,
+                        created_on=timezone.now(),
+                        status='Created'
+                    )
+                except:
+                    messages.error(request, f'One or more fields in the create simulation for simulation name: { self.simName } was incorrect. We have reset the form to default values, please setup at least 1 campus instantiation and intervention')
+                    log.error(f'One or more fields in the create simulation for simulation name:{ self.simName } was incorrect.')
+                    return render(request, self.template_name, self.get_context_data())
                 q.save()
                 launchSimulationTask(self.request, int(formData['instantiatedCampus'][0]), BETA)
                 messages.info(request, f'Simulation: { self.simName } is created. Please wait while we run the simulation on our servers, typical campus instantiations upto 10,000 agents takes about 2 minutes/ iteration.')
