@@ -60,7 +60,7 @@
           }
         }
       }
-      console.log(plotid)
+      var legendIterator = 0;
       var plotOption = '';
       $.each($("input[name='inlineRadioOptions']:checked"), function () {
             plotOption = $(this).val();
@@ -73,7 +73,7 @@
 
       for (let i = 0; i < parseInt(options.length); i++) {
         var traceList = []
-
+        legendIterator =0;
         for(var j=0; j<simulation.length; j++){
           var data = $.ajax({type: "GET", url: "/api/sim/"+ simulation[j] +"/", async: false}).responseJSON;
           var mean_plus_std = data['agg_results'][plotOption][options[i]].mean.map(function (num, idx) {
@@ -87,9 +87,9 @@
               }
               return min_floor_zero;
             });
-          traceList.push(makeTraceTriplets(data['agg_results'].time, data['agg_results'][plotOption][options[i]].mean, mean_plus_std, mean_minus_std, options[i], intervention=x_data['intervention']))
+          traceList.push(makeTraceTriplets(data['agg_results'].time, data['agg_results'][plotOption][options[i]].mean, mean_plus_std, mean_minus_std, options[i], intervention=x_data[plotid[legendIterator]]['intv']));
+          legendIterator++;
           }
-
           var title = ""
           if (plotOption == 'daily'){
             title  = "Daily new positive " + options[i] + " ";}
