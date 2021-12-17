@@ -49,7 +49,18 @@
   $("#submitBtn").click(function () {
       $("#target").empty();
       var simulation = $("#simulation").val();
-
+      var plotlegendid = parseInt(simulation[0])
+      var plotid=[]
+      console.log(simulation.length)
+      for(let m=0; m<simulation.length;m++){
+        for(let k=0; k <x_data.length; k++){
+          if(x_data[k]['id'] == simulation[m])
+          {
+            plotid.push(k)
+          }
+        }
+      }
+      console.log(plotid)
       var plotOption = '';
       $.each($("input[name='inlineRadioOptions']:checked"), function () {
             plotOption = $(this).val();
@@ -70,7 +81,11 @@
                     });
 
           var mean_minus_std = data['agg_results'][plotOption][options[i]].mean.map(function (num, idx) {
-              return num - data['agg_results'][plotOption][options[i]].std[idx];
+              var min_floor_zero = num - data['agg_results'][plotOption][options[i]].std[idx];
+              if(min_floor_zero < 0){
+                min_floor_zero = 0;
+              }
+              return min_floor_zero;
             });
           traceList.push(makeTraceTriplets(data['agg_results'].time, data['agg_results'][plotOption][options[i]].mean, mean_plus_std, mean_minus_std, options[i], intervention=x_data['intervention']))
           }
@@ -83,7 +98,7 @@
           }
           console.log(traceList.length)
           console.log(traceList)
-
+          
           traceList = [].concat.apply([], traceList);
           // console.log(traceList.length)
           // console.log(traceList)
