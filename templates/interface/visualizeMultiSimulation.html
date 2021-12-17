@@ -70,6 +70,7 @@
       $.each($("input[name='plot']:checked"), function () {
         options.push($(this).val());
       });
+      var color_list_plots = [[255, 0, 0],[0,255, 0],[0, 0,255],[255,255, 0],[0,255,255],[0,255,255],[0,0,128],[0,128,128],[128,0,128],[0,128,0],[0, 0, 0],[128,128,0]]
 
       for (let i = 0; i < parseInt(options.length); i++) {
         var traceList = []
@@ -87,7 +88,7 @@
               }
               return min_floor_zero;
             });
-          traceList.push(makeTraceTriplets(data['agg_results'].time, data['agg_results'][plotOption][options[i]].mean, mean_plus_std, mean_minus_std, options[i], intervention=x_data[plotid[legendIterator]]['intv']));
+          traceList.push(makeTraceTriplets(data['agg_results'].time, data['agg_results'][plotOption][options[i]].mean, mean_plus_std, mean_minus_std, options[i], color_list_plots[legendIterator], intervention=x_data[plotid[legendIterator%(color_list_plots.length)]]['intv']));
           legendIterator++;
           }
           var title = ""

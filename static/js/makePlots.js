@@ -3,7 +3,7 @@ function getRandomInt (min, max) {
 }
 
 
-function makeTraceTriplets(time, mean, pos_std, neg_std, label, intervention=null){
+function makeTraceTriplets(time, mean, pos_std, neg_std, label, plotColor=null, intervention=null){
 
     if (intervention == null){
         legend = label;
@@ -11,10 +11,17 @@ function makeTraceTriplets(time, mean, pos_std, neg_std, label, intervention=nul
     else{
         legend = intervention;
     }
-
+    // console.log("in make trace triplets");
+    // console.log(typeof(plotColor));
+    // console.log(plotColor[0]);
     var r = getRandomInt(0, 251);
     var g = getRandomInt(0, 251);
     var b = getRandomInt(0, 251);
+    if(plotColor != null){
+        r = plotColor[0];
+        g = plotColor[1];
+        b = plotColor[2];
+    }
     var pos_std_curve = {
         x: time,
         y: pos_std,
